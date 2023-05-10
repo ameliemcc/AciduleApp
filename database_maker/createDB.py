@@ -1,10 +1,11 @@
 import sqlite3
 from sqlite3 import Error
 
+# Connect to the SQLite database
 conn = sqlite3.connect("AciduleDB.db")
-
 cur = conn.cursor()
 
+# Create "emission" table
 cur.execute("""CREATE TABLE IF NOT EXISTS emission (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             fichier_nom TEXT,
@@ -15,6 +16,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS emission (
             FOREIGN KEY(transcription_id) REFERENCES transcription(id)
             );""")
 
+# Create "transcription" table
 cur.execute("""CREATE TABLE IF NOT EXISTS transcription (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             texte TEXT,
@@ -22,11 +24,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS transcription (
             FOREIGN KEY(emission_id) REFERENCES emission(id)
             );""")
 
+# Create "topic" table
 cur.execute("""CREATE TABLE IF NOT EXISTS topic (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             topic TEXT
             );""")
 
+# Create "transcription_topic" table
 cur.execute("""CREATE TABLE IF NOT EXISTS transcription_topic (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             transcription_id INTEGER,
@@ -35,31 +39,23 @@ cur.execute("""CREATE TABLE IF NOT EXISTS transcription_topic (
             FOREIGN KEY(topic_id) REFERENCES topic(id)
             );""")
 
-cur.execute("""CREATE TABLE IF NOT EXISTS freq_word (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              word TEXT
-            );""")
+# Create "transcription_freq_word" table
+cur.execute('''CREATE TABLE IF NOT EXISTS transcription_freq_word (
+                    id INTEGER PRIMARY KEY,
+                    transcription_id INTEGER,
+                    word_id INTEGER,
+                    FOREIGN KEY(transcription_id) REFERENCES transcription(id),
+                    FOREIGN KEY(word_id) REFERENCES freq(id)
+                )''')
 
-cur.execute("""CREATE TABLE IF NOT EXISTS transcription_freq_word (
-              transcription_id INTEGER,
-              word_freq_id INTEGER,
-              FOREIGN KEY(transcription_id) REFERENCES transcription(id),
-              FOREIGN KEY(word_freq_id) REFERENCES freq_word(id)
-          );""")
+# Create "freq" table
+cur.execute('''CREATE TABLE IF NOT EXISTS freq (
+                    id INTEGER PRIMARY KEY,
+                    word TEXT,
+                    frequency INTEGER
+                )''')
 
-cur.execute("""CREATE TABLE IF NOT EXISTS freq (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              frequency INTEGER
-            );""")
-
-cur.execute("""CREATE TABLE IF NOT EXISTS freq_word_freq (
-              word_freqency_id INTEGER,
-              freq_id INTEGER,
-              FOREIGN KEY(word_freqency_id) REFERENCES freq_word(id),
-              FOREIGN KEY(freq_id) REFERENCES freq(id)
-          );""")
-
+# Commit the changes and close the cursor and connection
 conn.commit()
 cur.close()
 conn.close()
-

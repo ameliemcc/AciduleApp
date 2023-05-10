@@ -1,17 +1,15 @@
 from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer
-
-
-
-
 import spacy
 import os
 from bertopic import BERTopic
-nlp = spacy.load("fr_core_news_sm")
+
 import chardet
 import os
 
-directory = os.fsencode("/Users/mariemccormick/PycharmProjects/AciduleTranscription/transcriptions")
+nlp = spacy.load("fr_core_news_sm")
+
+directory = os.fsencode("/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions")
 transcriptions = []
 
 for root, directories, files in os.walk(directory):

@@ -8,25 +8,46 @@ import matplotlib.pyplot as plt
 directory = os.fsencode("/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions")
 
 
-def ten_common_nouns(doc):
-    filtered_tokens_nouns = []
-    for token in doc:
-        if token.is_stop == False and token.text.isalpha() == True and token.pos_ == 'NOUN':
-            token.lemma_ = str(token.lemma_).lower()
-            filtered_tokens_nouns.append(token.lemma_)
-    word_freq = Counter(filtered_tokens_nouns)
-    common_words = word_freq.most_common(10)
-    k, v = [], []
-    for word in common_words:
-        k.append(word[0])
-        v.append(word[1])
-    return (k, v)
+import sqlite3
+
+conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db")
+cursor = conn.cursor()
+
+# Retrieve the distinct transcription_id values
+cursor.execute("SELECT DISTINCT transcription_id FROM transcription_freq_word")
+transcription_ids = cursor.fetchall()
+
+nouns_dict = []
+
+for transcription_id in transcription_ids:
+    # Retrieve the word and frequency for the given transcription_id
+    print(transcription_id)
+    cursor.execute("""
+        SELECT f.word, f.frequency
+        FROM freq AS f
+        INNER JOIN transcription_freq_word AS tfw ON tfw.word_id = f.id
+        WHERE tfw.transcription_id = ?
+        """, (transcription_id[0],))
+    words = cursor.fetchall()
+    print(words)
+
+    # Create a dictionary for the transcription_id
+    transcription_dict = {
+        'transcription_id': transcription_id[0],
+        'nouns': [{'word': word[0], 'occurrences': word[1], 'colors': 4} for word in words]
+    }
+    nouns_dict.append(transcription_dict)
+    for word, occurrence in words:
+        print(word)
+        print(occurrence)
+cursor.close()
+conn.close()
+
 
 
 for root, directories, files in os.walk(directory):
     for filename in files:
         filepath = os.path.join(root, filename)
-
         try:
             with open(filepath,  encoding="utf8", errors='ignore') as file:
                 text = file.read()
@@ -60,7 +81,3 @@ for root, directories, files in os.walk(directory):
             continue
     else:
         continue
-
-
-
-
