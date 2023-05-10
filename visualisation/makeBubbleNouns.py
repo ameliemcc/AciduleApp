@@ -17,7 +17,18 @@ cursor = conn.cursor()
 cursor.execute("SELECT DISTINCT transcription_id FROM transcription_freq_word")
 transcription_ids = cursor.fetchall()
 
+
+def ten_common_words(doc):
+    filtered_tokens = []
+    for token in doc:
+        if token.is_stop == False and token.text.isalpha() == True:
+            filtered_tokens.append(token.lemma_)
+    word_freq = Counter(filtered_tokens)
+    common_words = word_freq.most_common(10)
+    return common_words
+
 nouns_dict = []
+
 
 for transcription_id in transcription_ids:
     # Retrieve the word and frequency for the given transcription_id
@@ -54,6 +65,7 @@ for root, directories, files in os.walk(directory):
                 text = text.lower()
                 doc = nlp(text)
                 word, occurence = ten_common_nouns(doc)
+                print(word, occurence)
                 length = len(word)
                 color = '#F0F8FF'
                 colors = [color] * length

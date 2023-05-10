@@ -1,5 +1,7 @@
 import streamlit as st
 import sqlite3
+from bubble import BubbleChart
+import matplotlib.pyplot as plt
 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db")
@@ -40,7 +42,45 @@ conn.close()
 st.write("Selected fichier_nom:", selected_fichier_nom)
 
 # Display the word and frequency from the "freq" table on the right side of the web interface
+wlist = []
+olist = []
 for word, frequency in words:
     st.write("Word:", word)
     st.write("Frequency:", frequency)
     st.write("---")  # Add a separator between each word-frequency pair
+    wlist.append(word)
+    olist.append(frequency)
+
+data = list(zip(wlist, olist))
+print(data)
+k, v = [], []
+for word in data:
+    k.append(word[0])
+    v.append(word[1])
+
+
+word, occurence = k,v
+print(word, occurence)
+length = len(word)
+color = '#F0F8FF'
+colors = [color] * length
+nouns_dict = dict({
+    'words': word,
+    'occurences': occurence,
+    'colors': colors
+})
+
+bubble_chart = BubbleChart(area=nouns_dict['occurences'],
+                                           bubble_spacing=0.1)
+bubble_chart.collapse()
+fig, ax = plt.subplots(subplot_kw=dict(aspect="equal"))
+bubble_chart.plot(
+                    ax, nouns_dict['words'], nouns_dict['colors'])
+ax.axis("off")
+ax.relim()
+ax.autoscale_view()
+               # titre = str(re.findall("b'(S\d{5}_P\d{3}_\w+_\d{4}_\d{2}_\d{2})\.txt'", str(filename)))
+               # print(titre)
+plt.show()
+st.pyplot(fig=fig)
+
