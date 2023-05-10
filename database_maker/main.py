@@ -11,7 +11,6 @@ def main():
                 duree TEXT,
                 transcription_id INTEGER,
                 FOREIGN KEY(transcription_id) REFERENCES transcription(id)
-
             );"""
 
     CREATE_TRANSCRIPTION_TABLE = """ CREATE TABLE IF NOT EXISTS transcription (
@@ -66,6 +65,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
 '''
 
     INSERT_EMISSION = """INSERT INTO emission (

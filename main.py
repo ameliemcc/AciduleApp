@@ -1,32 +1,17 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
+import numpy as np
+import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+#from bubble import BubbleChart
+from visualisation.bubble import BubbleChart
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
 
 import matplotlib.pyplot as plt
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
-st.text('Fixed width text')
-col1, col2 = st.columns(2)
-col1.write("This is column 1")
-col2.write("This is column 2")
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 
 data = {
     'bigrams': ['ever seen',
@@ -58,8 +43,6 @@ bubble_chart = BubbleChart(area=data['frequency'],
                            bubble_spacing=0.1)
 bubble_chart.collapse()
 
-
-
 fig, ax = plt.subplots(subplot_kw=dict(aspect="equal"))
 fig.set_size_inches(9, 13, forward=True)
 bubble_chart.plot(
@@ -67,4 +50,34 @@ bubble_chart.plot(
 ax.axis("off")
 ax.relim()
 ax.autoscale_view()
-plt.show()
+#plt.show()
+
+# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+st.text('Fixed width text')
+add_selectbox = st.sidebar.selectbox(
+    "How would you like to be contacted?",
+    ("Email", "Home phone", "Mobile phone")
+)
+
+with st.container():
+   st.write("This is inside the container")
+
+   # You can call any Streamlit command, including custom components:
+   st.bar_chart(np.random.randn(50, 3))
+
+with st.container():
+    st.write("This is inside the container")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("This is column 1")
+        st.bar_chart(np.random.randn(50, 3))
+    with col2:
+        st.write("This is column 2")
+        st.pyplot(fig=fig)
+   # You can call any Streamlit command, including custom components:
+
+
+st.write("This is outside the container")
+
+
+

@@ -5,7 +5,7 @@ import os
 nlp = spacy.load("fr_core_news_sm")
 from visualisation.bubble import BubbleChart
 import matplotlib.pyplot as plt
-directory = os.fsencode("/Users/mariemccormick/PycharmProjects/AciduleTranscription/transcriptions")
+directory = os.fsencode("/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions")
 
 
 def ten_common_nouns(doc):
