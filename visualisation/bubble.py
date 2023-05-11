@@ -1,16 +1,3 @@
-"""
-===================
-Packed-bubble chart
-===================
-
-Create a packed-bubble chart to represent scalar data.
-The presented algorithm tries to move all bubbles as close to the center of
-mass as possible while avoiding some collisions by moving around colliding
-objects. In this example we plot the market share of different desktop
-browsers.
-(source: https://gs.statcounter.com/browser-market-share/desktop/worldwidev)
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 7})
@@ -149,6 +136,5 @@ class BubbleChart:
             ax.add_patch(circ)
             ax.text(*self.bubbles[i, :2], labels[i],
                     horizontalalignment='center', verticalalignment='center')
-
 
 
