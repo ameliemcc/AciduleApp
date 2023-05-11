@@ -2,7 +2,7 @@ import streamlit as st
 import sqlite3
 from visualisation.bubble import BubbleChart
 import matplotlib.pyplot as plt
-
+import streamlit.components.v1 as components
 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect('/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db')
@@ -10,14 +10,15 @@ cursor = conn.cursor()
 
 # Fetch "fichier_nom" values from the "emission" table
 cursor.execute("SELECT DISTINCT fichier_nom FROM emission")
-fichier_noms = cursor.fetchall()
-fichier_noms = [fichier_nom[0] for fichier_nom in fichier_noms]
+fichier_noms = [fichier_nom[0] for fichier_nom in cursor.fetchall()]
 
 
 # Streamlit app
 def main():
-    st.title("Emission Transcriptions")
+    st.markdown(open('htmlStyle.html').read(), unsafe_allow_html=True)
 
+    st.title("Emission Transcriptions")
+    html_style = open('htmlStyle.html').read()
     # Sidebar with scroll-down menu
     selected_fichier_nom = st.sidebar.selectbox("Select Fichier Nom", fichier_noms)
 
@@ -29,11 +30,17 @@ def main():
 
     # Display the selected "texte" with line-wrap
     if texte:
-        st.markdown("<div style='white-space: pre-line;'>Texte:</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='white-space: pre-line;'>{texte[0]}</div>", unsafe_allow_html=True)
+        #st.markdown("<div style='white-space: pre-line;'>Texte:</div>", unsafe_allow_html=True)
+        #st.markdown(f"<div style='white-space: pre-line;'>{texte[0]}</div>", unsafe_allow_html=True)
+        st.components.v1.html(html_style + """ 
+        <div class = "box" >
+        {}
+        </div>
+        """.format(texte[0]), scrolling=True, height=300)
     else:
         st.text("No transcription found for the selected Fichier Nom.")
 
+    # Query the database to fetch word and frequency from the "freq" table based on the selected "fichier_nom"
     cursor.execute("""
         SELECT f.word, f.frequency
         FROM freq AS f
@@ -45,44 +52,28 @@ def main():
     words = cursor.fetchall()
 
     # Display the word and frequency from the "freq" table on the right side of the web interface
-    # make this more succint
-    wlist = []
-    olist = []
-    for word, frequency in words:
-        st.write("Word:", word)
-        st.write("Frequency:", frequency)
-        st.write("---")  # Add a separator between each word-frequency pair
-        wlist.append(word)
-        olist.append(frequency)
+    word, occurrence = zip(*words)
+    colors = ['#F0F8FF'] * len(word)
 
-    data = list(zip(wlist, olist))
-    print(data)
-    k, v = [], []
-    for word in data:
-        k.append(word[0])
-        v.append(word[1])
 
-    word, occurence = k, v
-    print(word, occurence)
-    length = len(word)
-    color = '#F0F8FF'
-    colors = [color] * length
-    nouns_dict = dict({
-        'words': word,
-        'occurences': occurence,
+   # color_palette = ['#FDF6E3', '#FFA07A', '#8FD8D2', '#FFD700']
+
+    nouns_dict = {
+        'words': list(word),
+        'occurrences': list(occurrence),
         'colors': colors
-    })
+    }
 
-    bubble_chart = BubbleChart(area=nouns_dict['occurences'],
-                               bubble_spacing=0.1)
+    # Create the bubble chart
+    bubble_chart = BubbleChart(area=nouns_dict['occurrences'], bubble_spacing=0.1)
     bubble_chart.collapse()
     figBubble, ax = plt.subplots(subplot_kw=dict(aspect="equal"))
-    bubble_chart.plot(
-        ax, nouns_dict['words'], nouns_dict['colors'])
+    bubble_chart.plot(ax, nouns_dict['words'], nouns_dict['colors'])
     ax.axis("off")
     ax.relim()
     ax.autoscale_view()
 
+    # Display the chart inside a container
     with st.container():
         st.write("This is inside the container")
         col1, col2 = st.columns(2)
@@ -93,12 +84,5 @@ def main():
         st.pyplot(fig=figBubble)
 
 
-
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
