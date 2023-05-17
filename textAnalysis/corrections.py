@@ -12,8 +12,13 @@ for filename in os.listdir(directory):
 
         # Replace 'lozan' with 'lausanne' in the content
         content = re.sub(r"losanne|lozan", "lausanne", content, flags=re.IGNORECASE)
-        content = re.sub(r"lausanneoise", "lausannoise", content, flags=re.IGNORECASE)
-        content = re.sub(r"lausanneois", "lausannois", content, flags=re.IGNORECASE)
+        content = re.sub(r"lausanneoise|lozanoise", "lausannoise", content, flags=re.IGNORECASE)
+        content = re.sub(r"lausanneois|lozanois", "lausannois", content, flags=re.IGNORECASE)
+
+        content = re.sub(r"asideul|sidule", "acidule", content, flags=re.IGNORECASE)
+        content = re.sub(r"yagy", "jaggi", content, flags=re.IGNORECASE)
+        content = re.sub(r"venage", "venoge", content, flags=re.IGNORECASE)
+
         #   'asideul',
         #   'sidule',
         #   'yagy',
