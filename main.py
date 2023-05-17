@@ -21,7 +21,7 @@ def main():
 
 
 
-    st.title("Emission Transcriptions")
+    st.title("Radio Acidule")
     html_style = open('htmlStyle.html').read()
     # Sidebar with scroll-down menu
     selected_fichier_nom = st.sidebar.selectbox("Select Fichier Nom", fichier_noms)
@@ -85,12 +85,11 @@ def main():
 
     # Display the chart inside a container
     with st.container():
-        st.write("This is inside the container")
         col1, col2 = st.columns(2)
         with col1:
-            st.write("This is column 1")
+            st.write("Thèmes")
         with col2:
-            st.write("This is column 2")
+            st.write("Mots fréquents")
             st.pyplot(fig=figBubble)
     # Display the selected "texte" with line-wrap
     if texte:
