@@ -8,11 +8,5 @@ topics = hdp_model.print_topics()
 for topic in topics:
     print(topic)
 
-'''topic_assignments = [hdp_model.infer(doc) for doc in corpus]
-for i, doc_topics in enumerate(topic_assignments):
-    print(f"Document {i}: {doc_topics}")'''
-
-
-for document in corpus:
-    topic_distribution = hdp_model.get_document_topics(document)
-    print(topic_distribution)
+# get topics
+# use an other corpus to train de model?

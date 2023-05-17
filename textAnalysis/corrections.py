@@ -19,9 +19,6 @@ for filename in os.listdir(directory):
         content = re.sub(r"yagy", "jaggi", content, flags=re.IGNORECASE)
         content = re.sub(r"venage", "venoge", content, flags=re.IGNORECASE)
 
-        #   'asideul',
-        #   'sidule',
-        #   'yagy',
-        #   'venage',
+        #'aacidule',
         with open(file_path, "w") as file:
             file.write(content)
