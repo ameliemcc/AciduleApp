@@ -12,6 +12,7 @@ cursor = conn.cursor()
 
 folder_path = "/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions"  # Path to the folder containing the .txt files
 
+# enlever si transcription vide
 
 def add_transcription_and_emission(name):
     if name.endswith(".txt"):
@@ -31,49 +32,68 @@ def add_transcription_and_emission(name):
         cursor.execute(query_transcription, params_transcription)
 
 
-# Function to filter common nouns
-def common_nouns(texte):
-    filtered_tokens_nouns = []
 
-    for token in texte:
-        if token.is_stop == False and token.text.isalpha() == True and token.pos_ == 'NOUN':
-            token.lemma_ = str(token.lemma_).lower()
-            filtered_tokens_nouns.append(token.lemma_)
+def process_text(text):
+    doc = nlp(text)
+    processed_tokens = []
 
-    return filtered_tokens_nouns
+    for token in doc:
+        # Lemmatize and remove punctuation, numerical characters, and stop words
+
+        if token.is_alpha and not token.is_stop:
+            lemma = token.lemma_.lower()
+
+            # Filter tokens based on POS tags (noun, adjective, adverb, verb)
+            if token.pos_ in ['NOUN', 'ADJ', 'ADV', 'VERB']:
+                processed_tokens.append(lemma)
+
+    return processed_tokens
+
+def add_processed_tokens_to_transcription(transcription_id, processed_tokens):
+    # Convert the processed tokens list to a string
+    lemmas = " ".join(processed_tokens)
+
+    # Update the "lemmas" column in the "transcription" table
+    query_update_lemmas = "UPDATE transcription SET lemmas = ? WHERE id = ?"
+    params_update_lemmas = (lemmas, transcription_id)
+    cursor.execute(query_update_lemmas, params_update_lemmas)
+
+def process_transcriptions():
+    # Loop over the files in the folder and add transcriptions and emissions
+    for filename in os.listdir(folder_path):
+        add_transcription_and_emission(filename)
+
+    # Retrieve the "texte" column from the "transcription" table
+    cursor.execute("SELECT id, texte FROM transcription")
+    transcriptions = cursor.fetchall()
+
+    # Process each transcription
+    for transcription in transcriptions:
+        transcription_id = transcription[0]
+        texte = transcription[1]
+        processed_words = process_text(texte)
+        top_10 = Counter(processed_words).most_common(10)
+        print(top_10)
+
+        # Insert the frequent words and their frequencies into the "transcription_freq_word" and "freq" tables
+        for word, frequency in top_10:
+            # Insert into "freq" table
+            cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
+            word_id = cursor.lastrowid
+
+            # Insert into "transcription_freq_word" table
+            cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
+                           (transcription_id, word_id))
+        add_processed_tokens_to_transcription(transcription_id, processed_words)
 
 
-# Loop over the files in the folder and add transcriptions and emissions
-for filename in os.listdir(folder_path):
-    add_transcription_and_emission(filename)
+    # Commit the changes
+    conn.commit()
 
-# Retrieve the "texte" column from the "transcription" table
-cursor.execute("SELECT id, texte FROM transcription")
-transcriptions = cursor.fetchall()
 
-# Process each transcription
-for transcription in transcriptions:
-    transcription_id = transcription[0]
-    texte = transcription[1]
+# Call the function to process transcriptions
+process_transcriptions()
 
-    # Tokenize the text into words and count their frequencies
-    doc = nlp(texte)
-    words = common_nouns(doc)
-    word_frequencies = Counter(words)
-
-    # Select the top 10 most frequent words
-    top_10 = word_frequencies.most_common(10)
-
-    # Insert the frequent words and their frequencies into the "transcription_freq_word" and "freq" tables
-    for word, frequency in top_10:
-        # Insert into "freq" table
-        cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
-        word_id = cursor.lastrowid
-
-        # Insert into "transcription_freq_word" table
-        cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
-                       (transcription_id, word_id))
-
-# Commit the changes and close the connection
-conn.commit()
+# Close the connection
 conn.close()
+

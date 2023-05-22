@@ -20,6 +20,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS emission (
 cur.execute("""CREATE TABLE IF NOT EXISTS transcription (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             texte TEXT,
+            lemmas TEXT,
             emission_id INTEGER,
             FOREIGN KEY(emission_id) REFERENCES emission(id)
             );""")
