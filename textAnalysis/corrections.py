@@ -20,7 +20,7 @@ for filename in os.listdir(directory):
 
         #'aacidule', la sidule
         # chahy = chailly
-        # l'Ousanne lezanoi lausann losan losanoi lezanoi
+        # l'Ousanne lezanoi lausann losan losanoi lezanoi lezanois losanoi alausanne
         # gol = goal S00040_P169_Conseil_Communal_Lausanne_1990_11_0
         # enlever ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...
         # dans les transcriptions
