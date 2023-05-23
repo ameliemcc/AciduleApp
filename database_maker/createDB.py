@@ -9,6 +9,7 @@ cur = conn.cursor()
 cur.execute("""CREATE TABLE IF NOT EXISTS emission (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             fichier_nom TEXT,
+            emission_nom TEXT,
             titre TEXT,
             date_diffusion TEXT,
             lien TEXT,

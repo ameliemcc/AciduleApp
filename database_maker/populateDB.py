@@ -10,30 +10,57 @@ nlp = spacy.load("fr_core_news_sm")
 conn = sqlite3.connect('AciduleDB.db')
 cursor = conn.cursor()
 
-folder_path = "/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions"  # Path to the folder containing the .txt files
-
-# enlever si transcription vide
+#folder_path = "/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions"  # Path to the folder containing the .txt files
+folder_path = "../transcriptions"  # Path to the folder containing the .txt files
 
 def add_transcription_and_emission(name):
     if name.endswith(".txt"):
         file_path = os.path.join(folder_path, name)
         with open(file_path, "r") as file:
             content = file.read()
-        if len(content) > 20 :
+
+        # Don't add into the DB if the transcription is empty
+        if len(content) > 20:
             patternOnes = r'\b(\d)\s+\1\b|\b(\d)\b'
             patternDots = r'\.\.\.'
             content = re.sub(patternOnes, '', content)
             content = re.sub(patternDots, '', content)
-            # Insert into "emission" table
-            query_emission = "INSERT INTO emission (fichier_nom) VALUES (?)"
-            params_emission = (name,)
+
+            # Insert the date
+            try:
+                date_pattern = r"\d{4}_\d{2}_\d{2}"
+                dates = re.search(date_pattern, name)
+                date = dates.group()
+            except AttributeError:
+                date = None
+
+            # Insert the title
+            try:
+                # name_pattern = r"\b\w{3,}\b"
+                name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([a-zA-Z]+)_\d{4}_\d{2}_\d{2}_([A-Za-z_]+)\.txt"
+                name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([A-Za-z_]+)_\d{4}_\d{2}_\d{2}(\d{1}|(_[A-Za-z_]+)\.txt|)"
+                # https://regex101.com/r/O6P1f2/1
+                words = re.findall(name_pattern, name)
+                print(words)
+                em_nom = ' : '.join([t[1] for t in words])
+                #em_nom = ' : '.join(words)
+            except AttributeError:
+                em_nom = None
+
+            # Insert the file name
+            fichier_nom = name
+
+            # Insert into emission table and retrieve the emission_id
+            query_emission = "INSERT INTO emission (date_diffusion, emission_nom, fichier_nom) VALUES (?, ?, ?)"
+            params_emission = (date, em_nom, fichier_nom)
             cursor.execute(query_emission, params_emission)
             emission_id = cursor.lastrowid
 
-            # Insert into "transcription" table
+            # Insert the text with the corresponding emission_id
             query_transcription = "INSERT INTO transcription (texte, emission_id) VALUES (?, ?)"
             params_transcription = (content, emission_id)
             cursor.execute(query_transcription, params_transcription)
+
 
 
 
@@ -76,7 +103,7 @@ def process_transcriptions():
         texte = transcription[1]
         processed_words = process_text(texte)
         top_10 = Counter(processed_words).most_common(10)
-        print(top_10)
+       # print(top_10)
 
         # Insert the frequent words and their frequencies into the "transcription_freq_word" and "freq" tables
         for word, frequency in top_10:

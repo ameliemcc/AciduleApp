@@ -31,24 +31,6 @@ for document in text_corpus:
     words = document.split()
     texts.append(words)
 
-#print(texts)
-
-
-def process_corpus(texts):
-    # Count the frequency of each word across documents
-    word_frequency = defaultdict(int)
-    for text in texts:
-        unique_words = set(text)
-        for token in unique_words:
-            word_frequency[token] += 1
-
-    # Determine the maximum allowed occurrence based on the 40% threshold
-    max_occurrence = len(texts) * 0.2
-
-    # Only keep words that occur less than or equal to the maximum allowed occurrence
-    processed_corpus = [[token for token in text if word_frequency[token] <= max_occurrence] for text in texts]
-    return processed_corpus
-
 
 # Count the frequency of each word
 frequency = defaultdict(int)
