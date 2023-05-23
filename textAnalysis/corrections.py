@@ -18,12 +18,15 @@ for filename in os.listdir(directory):
         content = re.sub(r"yagy", "jaggi", content, flags=re.IGNORECASE)
         content = re.sub(r"venage", "venoge", content, flags=re.IGNORECASE)
 
-        #'aacidule',
+        #'aacidule', la sidule
         # chahy = chailly
-        # l'Ousanne
+        # l'Ousanne lezanoi lausann losan losanoi lezanoi
         # gol = goal S00040_P169_Conseil_Communal_Lausanne_1990_11_0
         # enlever ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...
         # dans les transcriptions
-        # vvf
+        # vvf wwf
+        # dolce viter Delcevita
+        # Los Anoises
+        # Téchard richard
         with open(file_path, "w") as file:
             file.write(content)

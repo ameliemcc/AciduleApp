@@ -19,17 +19,21 @@ def add_transcription_and_emission(name):
         file_path = os.path.join(folder_path, name)
         with open(file_path, "r") as file:
             content = file.read()
+        if len(content) > 20 :
+            patternOnes = r'\b(\d)\s+\1\b|\b(\d)\b'
+            patternDots = r'\.\.\.'
+            content = re.sub(patternOnes, '', content)
+            content = re.sub(patternDots, '', content)
+            # Insert into "emission" table
+            query_emission = "INSERT INTO emission (fichier_nom) VALUES (?)"
+            params_emission = (name,)
+            cursor.execute(query_emission, params_emission)
+            emission_id = cursor.lastrowid
 
-        # Insert into "emission" table
-        query_emission = "INSERT INTO emission (fichier_nom) VALUES (?)"
-        params_emission = (name,)
-        cursor.execute(query_emission, params_emission)
-        emission_id = cursor.lastrowid
-
-        # Insert into "transcription" table
-        query_transcription = "INSERT INTO transcription (texte, emission_id) VALUES (?, ?)"
-        params_transcription = (content, emission_id)
-        cursor.execute(query_transcription, params_transcription)
+            # Insert into "transcription" table
+            query_transcription = "INSERT INTO transcription (texte, emission_id) VALUES (?, ?)"
+            params_transcription = (content, emission_id)
+            cursor.execute(query_transcription, params_transcription)
 
 
 
@@ -39,12 +43,11 @@ def process_text(text):
 
     for token in doc:
         # Lemmatize and remove punctuation, numerical characters, and stop words
-
         if token.is_alpha and not token.is_stop:
             lemma = token.lemma_.lower()
 
             # Filter tokens based on POS tags (noun, adjective, adverb, verb)
-            if token.pos_ in ['NOUN', 'ADJ', 'ADV', 'VERB']:
+            if token.pos_ in ['NOUN', 'ADJ', 'ADV', 'VERB', 'PROPN'] and len(token) > 2:
                 processed_tokens.append(lemma)
 
     return processed_tokens
@@ -86,10 +89,8 @@ def process_transcriptions():
                            (transcription_id, word_id))
         add_processed_tokens_to_transcription(transcription_id, processed_words)
 
-
     # Commit the changes
     conn.commit()
-
 
 # Call the function to process transcriptions
 process_transcriptions()
