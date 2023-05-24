@@ -13,6 +13,14 @@ cursor = conn.cursor()
 #folder_path = "/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions"  # Path to the folder containing the .txt files
 folder_path = "../transcriptions"  # Path to the folder containing the .txt files
 
+# match repeating numbers
+patternNumb = r'\b(\d)(?: \1)+\b'
+# match repeating ... ... ...
+patternDots = r'(\.\.\.)\W{2,}'
+
+def replace_patterns(match):
+    return ''
+
 def add_transcription_and_emission(name):
     if name.endswith(".txt"):
         file_path = os.path.join(folder_path, name)
@@ -21,11 +29,8 @@ def add_transcription_and_emission(name):
 
         # Don't add into the DB if the transcription is empty
         if len(content) > 20:
-            patternOnes = r'\b(\d)\s+\1\b|\b(\d)\b'
-            patternDots = r'\.\.\.'
-            content = re.sub(patternOnes, '', content)
-            content = re.sub(patternDots, '', content)
-
+            content = re.sub(patternNumb, replace_patterns, content)
+            content = re.sub(patternDots, replace_patterns, content)
             # Insert the date
             try:
                 date_pattern = r"\d{4}_\d{2}_\d{2}"
@@ -33,33 +38,43 @@ def add_transcription_and_emission(name):
                 date = dates.group()
             except AttributeError:
                 date = None
-
             # Insert the title
             try:
-                # name_pattern = r"\b\w{3,}\b"
-                name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([a-zA-Z]+)_\d{4}_\d{2}_\d{2}_([A-Za-z_]+)\.txt"
-                name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([A-Za-z_]+)_\d{4}_\d{2}_\d{2}(\d{1}|(_[A-Za-z_]+)\.txt|)"
                 # https://regex101.com/r/O6P1f2/1
+                name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([A-Za-z_]+)_\d{4}_\d{2}_\d{2}(\d{1}|(_[A-Za-z_]+)\.txt|)"
                 words = re.findall(name_pattern, name)
-                print(words)
-                em_nom = ' : '.join([t[1] for t in words])
-                #em_nom = ' : '.join(words)
-            except AttributeError:
+                result = [item for item in words[0]]
+                if len(result) > 0:
+                    if result[-1] == "":
+                        title = result[0].replace("_", " ").strip()
+                        em_nom = title
+                    else:
+                        one = result[0].replace("_", " ").strip()
+                        two = result[-1].replace("_", " ").strip()
+                        em_nom = " : ".join([one, two])
+                else:
+                    em_nom=None
+            except (AttributeError, IndexError):
                 em_nom = None
-
-            # Insert the file name
+                # Insert the file name
             fichier_nom = name
 
-            # Insert into emission table and retrieve the emission_id
+                # Insert into emission table and retrieve the emission_id
             query_emission = "INSERT INTO emission (date_diffusion, emission_nom, fichier_nom) VALUES (?, ?, ?)"
             params_emission = (date, em_nom, fichier_nom)
             cursor.execute(query_emission, params_emission)
             emission_id = cursor.lastrowid
 
-            # Insert the text with the corresponding emission_id
+                # Insert the text with the corresponding emission_id
             query_transcription = "INSERT INTO transcription (texte, emission_id) VALUES (?, ?)"
             params_transcription = (content, emission_id)
             cursor.execute(query_transcription, params_transcription)
+
+
+
+        else:
+            pass
+
 
 
 
@@ -84,9 +99,9 @@ def add_processed_tokens_to_transcription(transcription_id, processed_tokens):
     lemmas = " ".join(processed_tokens)
 
     # Update the "lemmas" column in the "transcription" table
-    query_update_lemmas = "UPDATE transcription SET lemmas = ? WHERE id = ?"
+  #  query_update_lemmas = "UPDATE transcription SET lemmas = ? WHERE id = ?"
     params_update_lemmas = (lemmas, transcription_id)
-    cursor.execute(query_update_lemmas, params_update_lemmas)
+ #   cursor.execute(query_update_lemmas, params_update_lemmas)
 
 def process_transcriptions():
     # Loop over the files in the folder and add transcriptions and emissions
@@ -94,7 +109,7 @@ def process_transcriptions():
         add_transcription_and_emission(filename)
 
     # Retrieve the "texte" column from the "transcription" table
-    cursor.execute("SELECT id, texte FROM transcription")
+  #  cursor.execute("SELECT id, texte FROM transcription")
     transcriptions = cursor.fetchall()
 
     # Process each transcription
@@ -108,12 +123,12 @@ def process_transcriptions():
         # Insert the frequent words and their frequencies into the "transcription_freq_word" and "freq" tables
         for word, frequency in top_10:
             # Insert into "freq" table
-            cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
+      #      cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
             word_id = cursor.lastrowid
 
             # Insert into "transcription_freq_word" table
-            cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
-                           (transcription_id, word_id))
+         #   cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
+        #                   (transcription_id, word_id))
         add_processed_tokens_to_transcription(transcription_id, processed_words)
 
     # Commit the changes
