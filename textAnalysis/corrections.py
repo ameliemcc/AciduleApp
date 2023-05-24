@@ -29,6 +29,7 @@ for filename in os.listdir(directory):
         # sougar sous-gare
         #assydul
         #lozane
+        # Yagui
 
         with open(file_path, "w") as file:
             file.write(content)

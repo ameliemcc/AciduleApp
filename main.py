@@ -27,7 +27,7 @@ def main():
     st.title("Radio Acidule")
 
     html_style = open('htmlStyle.html').read()
-    selected_fichier_nom = st.sidebar.selectbox("Select Fichier Nom", emission_noms)
+    selected_fichier_nom = st.sidebar.selectbox("Choisir une émission", emission_noms)
 
     # Query the database to fetch the corresponding "date_diffusion" based on the selected "fichier_nom"
     cursor.execute("SELECT date_diffusion FROM emission WHERE emission_nom = ?", (selected_fichier_nom,))
