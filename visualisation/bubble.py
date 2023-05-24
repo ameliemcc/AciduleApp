@@ -19,6 +19,7 @@ class BubbleChart:
         Notes
         -----
         If "area" is sorted, the results might look weird.
+        https://towardsdatascience.com/advanced-visualisations-for-text-data-analysis-fc8add8796e2
         """
         area = np.asarray(area)
         r = np.sqrt(area / np.pi)

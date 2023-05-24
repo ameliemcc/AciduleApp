@@ -56,27 +56,21 @@ def add_transcription_and_emission(name):
                     em_nom=None
             except (AttributeError, IndexError):
                 em_nom = None
-                # Insert the file name
             fichier_nom = name
 
-                # Insert into emission table and retrieve the emission_id
+            # Insert into emission table and retrieve the emission_id
             query_emission = "INSERT INTO emission (date_diffusion, emission_nom, fichier_nom) VALUES (?, ?, ?)"
             params_emission = (date, em_nom, fichier_nom)
             cursor.execute(query_emission, params_emission)
             emission_id = cursor.lastrowid
 
-                # Insert the text with the corresponding emission_id
+            # Insert the text with the corresponding emission_id
             query_transcription = "INSERT INTO transcription (texte, emission_id) VALUES (?, ?)"
             params_transcription = (content, emission_id)
             cursor.execute(query_transcription, params_transcription)
 
-
-
         else:
             pass
-
-
-
 
 
 def process_text(text):
@@ -99,9 +93,9 @@ def add_processed_tokens_to_transcription(transcription_id, processed_tokens):
     lemmas = " ".join(processed_tokens)
 
     # Update the "lemmas" column in the "transcription" table
-  #  query_update_lemmas = "UPDATE transcription SET lemmas = ? WHERE id = ?"
+    query_update_lemmas = "UPDATE transcription SET lemmas = ? WHERE id = ?"
     params_update_lemmas = (lemmas, transcription_id)
- #   cursor.execute(query_update_lemmas, params_update_lemmas)
+    cursor.execute(query_update_lemmas, params_update_lemmas)
 
 def process_transcriptions():
     # Loop over the files in the folder and add transcriptions and emissions
@@ -109,7 +103,7 @@ def process_transcriptions():
         add_transcription_and_emission(filename)
 
     # Retrieve the "texte" column from the "transcription" table
-  #  cursor.execute("SELECT id, texte FROM transcription")
+    cursor.execute("SELECT id, texte FROM transcription")
     transcriptions = cursor.fetchall()
 
     # Process each transcription
@@ -118,17 +112,16 @@ def process_transcriptions():
         texte = transcription[1]
         processed_words = process_text(texte)
         top_10 = Counter(processed_words).most_common(10)
-       # print(top_10)
 
         # Insert the frequent words and their frequencies into the "transcription_freq_word" and "freq" tables
         for word, frequency in top_10:
             # Insert into "freq" table
-      #      cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
+            cursor.execute("INSERT INTO freq (word, frequency) VALUES (?, ?)", (word, frequency))
             word_id = cursor.lastrowid
 
             # Insert into "transcription_freq_word" table
-         #   cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
-        #                   (transcription_id, word_id))
+            cursor.execute("INSERT INTO transcription_freq_word (transcription_id, word_id) VALUES (?, ?)",
+                           (transcription_id, word_id))
         add_processed_tokens_to_transcription(transcription_id, processed_words)
 
     # Commit the changes
