@@ -2,7 +2,6 @@ from spellchecker import SpellChecker
 import spacy
 nlp = spacy.load("fr_core_news_sm")
 
-
 spell = SpellChecker(language='fr')
 # specify specific words maybe
 #spell.word_frequency.load_text_file('./my_free_text_doc.txt')

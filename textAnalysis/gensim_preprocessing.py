@@ -10,6 +10,7 @@ cursor = conn.cursor()
 # Retrieve the content of the 'lemmas' column from the 'transcription' table
 cursor.execute("SELECT lemmas FROM transcription")
 transcriptions = cursor.fetchall()
+print(transcriptions)
 
 # Create an empty list to store the lemmas
 text_corpus = []
@@ -22,8 +23,6 @@ for transcription in transcriptions:
 # Close the connection to the database
 conn.close()
 
-# Print the text_corpus list
-#print(text_corpus)
 
 # Tokenize the text corpus
 texts = []
@@ -42,12 +41,12 @@ for text in texts:
 #processed_corpus = [[token for token in text if frequency[token] > 1] for text in texts]
 #pprint.pprint(texts)
 #texts = process_corpus(texts)
-print('---------')
+
 #pprint.pprint(texts)
 # Create a dictionary and corpus using Gensim
 dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(doc) for doc in texts]
 
-print(dictionary)
-print(corpus)
-print(texts)
+#print(dictionary)
+#print(corpus)
+#print(texts)

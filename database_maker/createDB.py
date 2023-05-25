@@ -13,6 +13,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS emission (
             titre TEXT,
             date_diffusion TEXT,
             lien TEXT,
+            langue TEXT,
             transcription_id INTEGER,
             FOREIGN KEY(transcription_id) REFERENCES transcription(id)
             );""")
