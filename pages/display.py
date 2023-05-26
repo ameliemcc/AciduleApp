@@ -11,7 +11,7 @@ import pyLDAvis.gensim
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 import streamlit as st
-## Bigrams and trigrams
+from gensim.models import TfidfModel
 
 
 bigrams_phrases = gensim.models.Phrases(texts, min_count=5, threshold=100)
@@ -31,12 +31,6 @@ data_bigrams_trigrams = make_trigrams(data_bigrams)
 
 print(data_bigrams_trigrams[0])
 
-
-
-# TF-IDF REMOVAL
-
-
-from gensim.models import TfidfModel
 
 id2word = corpora.Dictionary(data_bigrams_trigrams)
 

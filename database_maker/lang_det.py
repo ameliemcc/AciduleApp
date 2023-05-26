@@ -1,16 +1,20 @@
-import spacy
+"""
+Detecting which language the emission is in and adding the information to the database.
+"""
 import sqlite3
+import spacy
 import langcodes
-
 from spacy_language_detection import LanguageDetector
 from spacy.language import Language
 
-
-def get_lang_detector(nlp, name):
-    return LanguageDetector(seed=42)  # We use the seed 42
+#def get_lang_detector(nlp, name):
+def get_lang_detector():
+    """Function necessary to use the spacy LanguageDetector"""
+    return LanguageDetector(seed=42)
 
 
 def detect_and_update_language():
+    """Function to detect the language and add it to the DB"""
     # Establish a connection to the SQLite database
     conn = sqlite3.connect('/database_maker/AciduleDB.db')
     cursor = conn.cursor()
@@ -23,7 +27,9 @@ def detect_and_update_language():
     nlp_model.add_pipe('language_detector', last=True)
 
     # Fetch all the emission IDs and texte from the transcription table
-    cursor.execute("SELECT e.id, t.texte FROM emission e JOIN transcription t ON e.id = t.emission_id")
+    cursor.execute("SELECT e.id, "
+                   "t.texte FROM emission e "
+                   "JOIN transcription t ON e.id = t.emission_id")
     rows = cursor.fetchall()
 
     for row in rows:

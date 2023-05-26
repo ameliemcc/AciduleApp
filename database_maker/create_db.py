@@ -1,5 +1,8 @@
+"""
+Provides the initial database structure
+"""
+
 import sqlite3
-from sqlite3 import Error
 
 # Connect to the SQLite database
 conn = sqlite3.connect("AciduleDB.db")
