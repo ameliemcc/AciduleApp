@@ -3,4 +3,5 @@
 1. corrections
 2. createDB
 3. populateDB
-4. main
+4. lang_det
+5. main

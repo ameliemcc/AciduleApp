@@ -27,8 +27,9 @@ for filename in os.listdir(directory):
         # dans les transcriptions
         #orpiste hors-piste
         # sougar sous-gare
-        #assydul
-        #lozane
+        #assydul de sidule assydul asacidule
+        # ', 'désastr', 'hérésie', 'jandaniell',
+        #lozane leuze
         # lozanoisse
         # lezanois
         # Yagui

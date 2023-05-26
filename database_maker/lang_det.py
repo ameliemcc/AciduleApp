@@ -12,7 +12,7 @@ def get_lang_detector(nlp, name):
 
 def detect_and_update_language():
     # Establish a connection to the SQLite database
-    conn = sqlite3.connect('/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db')
+    conn = sqlite3.connect('/database_maker/AciduleDB.db')
     cursor = conn.cursor()
 
     # Load the Spacy language model for language detection
