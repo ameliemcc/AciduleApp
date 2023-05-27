@@ -49,10 +49,6 @@ words_missing_in_tfidf = []
 
 print(texts[0][0:20])
 
-
-## Vizualizing the data
-
-
 lda_model = gensim.models.ldamodel.LdaModel(corpus = corpus,
                                            id2word=id2word,
                                            num_topics=15,
@@ -61,8 +57,6 @@ lda_model = gensim.models.ldamodel.LdaModel(corpus = corpus,
                                            chunksize=100,
                                            passes=15,
                                            alpha="auto")
-
-#%%
 
 #pyLDAvis.enable_notebook()
 vis=pyLDAvis.gensim.prepare(lda_model, corpus, id2word, mds="mmds", R=30)

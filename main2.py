@@ -27,8 +27,8 @@ cursor.execute("SELECT DISTINCT lien FROM emission")
 liens = [lien[0] for lien in cursor.fetchall()]
 
 # Fetch "emission_nom" values from the "emission" table
-cursor.execute("SELECT DISTINCT emission_nom FROM emission")
-emission_noms = [emission_nom[0] for emission_nom in cursor.fetchall()]
+cursor.execute("SELECT DISTINCT titre FROM emission")
+emission_noms = [titre[0] for titre in cursor.fetchall()]
 
 # Fetch "date_diffusion" values from the "emission" table
 cursor.execute("SELECT DISTINCT date_diffusion FROM emission")
@@ -47,9 +47,9 @@ if 'show' not in st.session_state:
     st.session_state['show'] = 'value'
 
 
-def handle_go_to(emission_nom):
+def handle_go_to(titre):
     if 'select_emission' not in st.session_state:
-        st.session_state['select_emission'] = emission_nom
+        st.session_state['select_emission'] = titre
     handle_select()
 
 
@@ -99,14 +99,18 @@ def handle_select():
     """Function handling the actions taken when an emission is selected to be displayed. """
     st.write(st.session_state.select_emission)
     selected_fichier_nom = st.session_state.select_emission
-    cursor.execute("SELECT date_diffusion FROM emission WHERE emission_nom = ?",
+    cursor.execute("SELECT date_diffusion FROM emission WHERE titre = ?",
                    (selected_fichier_nom,))
     date = cursor.fetchone()
-    date_form = ''.join(date) if date else ""
+    if date:
+        date_form = ''.join(date)
+    else:
+        pass
+    #date_form = ''.join(date) if date else ""
 
     # Query the database to fetch the corresponding "texte" based on the selected "fichier_nom"
     cursor.execute(
-        "SELECT t.texte FROM transcription t JOIN emission e ON t.emission_id = e.id WHERE e.emission_nom = ?",
+        "SELECT t.texte FROM transcription t JOIN emission e ON t.emission_id = e.id WHERE e.titre = ?",
         (selected_fichier_nom,))
     texte = cursor.fetchone()
     cursor.execute("""
@@ -115,7 +119,7 @@ def handle_select():
             INNER JOIN transcription_freq_word AS tfw ON tfw.word_id = f.id
             INNER JOIN transcription AS t ON t.id = tfw.transcription_id
             INNER JOIN emission AS e ON e.id = t.emission_id
-            WHERE e.emission_nom = ?
+            WHERE e.titre = ?
             """,
                    (selected_fichier_nom,)
                    )
@@ -166,8 +170,8 @@ def handle_search():
             word = cursor.fetchone()[0]
             cursor.execute("SELECT emission_id FROM transcription WHERE id = ?", (transcription_id,))
             emission_id = cursor.fetchone()[0]
-            cursor.execute("SELECT emission_nom FROM emission WHERE id = ?", (emission_id,))
-            emission_nom = cursor.fetchone()[0]
+            cursor.execute("SELECT titre FROM emission WHERE id = ?", (emission_id,))
+            titre = cursor.fetchone()[0]
             cursor.execute("""
                 SELECT f.word
                 FROM transcription_freq_word AS tfw
@@ -177,7 +181,7 @@ def handle_search():
 
             associated_words = [row[0] for row in cursor.fetchall()]
             st.write(word)
-            with st.expander(label=str(emission_nom)):
+            with st.expander(label=str(titre)):
                 st.write(emission_id)
                 word_list = []
                 for word in associated_words:
@@ -185,7 +189,7 @@ def handle_search():
                 words = ' – '.join(word_list)
                 st.write("Mots les plus fréquents dans cette émission:", words)
                 st.button('Accéder à la transcription de cette émission',
-                          on_click=lambda emission_nom=emission_nom: handle_go_to(emission_nom))
+                          on_click=lambda titre=titre: handle_go_to(titre), key=emission_id)
 
 
 def sidebar_elements():

@@ -6,9 +6,9 @@ import spacy
 import langcodes
 from spacy_language_detection import LanguageDetector
 from spacy.language import Language
+import language_data
 
-#def get_lang_detector(nlp, name):
-def get_lang_detector():
+def get_lang_detector(nlp, name):
     """Function necessary to use the spacy LanguageDetector"""
     return LanguageDetector(seed=42)
 
@@ -16,7 +16,7 @@ def get_lang_detector():
 def detect_and_update_language():
     """Function to detect the language and add it to the DB"""
     # Establish a connection to the SQLite database
-    conn = sqlite3.connect('/database_maker/AciduleDB.db')
+    conn = sqlite3.connect('AciduleDB.db')
     cursor = conn.cursor()
 
     # Load the Spacy language model for language detection

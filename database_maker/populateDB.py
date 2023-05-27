@@ -7,7 +7,9 @@ from spacy.symbols import NOUN, ORTH, LEMMA, POS
 
 
 nlp = spacy.load("fr_core_news_sm")
+# this didn't work
 nlp.Defaults.noun_rules = { "Madame": [{ORTH: "Madame", LEMMA: "Madame", POS: NOUN}] }
+nlp.Defaults.noun_rules = { "madame": [{ORTH: "madame", LEMMA: "madame", POS: NOUN}] }
 
 
 # Establish a connection to the SQLite database
@@ -45,6 +47,16 @@ def add_transcription_and_emission(name):
                 date = None
             # Insert the title
             try:
+                #fichier_pattern = r"P\d+_(\w+_\d+_\w+)\.txt"
+                fichier_pattern = r"P\d+_(.+)\.txt"
+                fich = re.findall(fichier_pattern, name)
+                titre = fich[0]
+                titre = titre.replace("_", " ").strip()
+            except (AttributeError, IndexError):
+                titre = name
+            print(titre)
+            #insert fichier nom
+            try:
                 # https://regex101.com/r/O6P1f2/1
                 name_pattern = r"[a-zA-Z]\d+_[a-zA-Z]\d+_([A-Za-z_]+)_\d{4}_\d{2}_\d{2}(\d{1}|(_[A-Za-z_]+)\.txt|)"
                 words = re.findall(name_pattern, name)
@@ -69,13 +81,18 @@ def add_transcription_and_emission(name):
                             one = result[0].replace("_", " ").strip()
                             two = result[-1].replace("_", " ").strip()
                             em_nom = " : ".join([one, two])
+                # ADD a last option for when no regex matches
+                #else:
+                    #name_pattern
+
             except (AttributeError, IndexError):
                 em_nom = None
+            print(em_nom)
             fichier_nom = name
 
             # Insert into emission table and retrieve the emission_id
-            query_emission = "INSERT INTO emission (date_diffusion, emission_nom, fichier_nom) VALUES (?, ?, ?)"
-            params_emission = (date, em_nom, fichier_nom)
+            query_emission = "INSERT INTO emission (date_diffusion, emission_nom, fichier_nom, titre) VALUES (?, ?, ?,?)"
+            params_emission = (date, em_nom, fichier_nom, titre)
             cursor.execute(query_emission, params_emission)
             emission_id = cursor.lastrowid
 
