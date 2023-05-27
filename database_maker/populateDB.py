@@ -3,8 +3,12 @@ import sqlite3
 import spacy
 from collections import Counter
 import os
+from spacy.symbols import NOUN, ORTH, LEMMA, POS
+
 
 nlp = spacy.load("fr_core_news_sm")
+nlp.Defaults.noun_rules = { "Madame": [{ORTH: "Madame", LEMMA: "Madame", POS: NOUN}] }
+
 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect('AciduleDB.db')
@@ -13,6 +17,7 @@ cursor = conn.cursor()
 #folder_path = "/Users/mariemccormick/PycharmProjects/AciduleApp/transcriptions"  # Path to the folder containing the .txt files
 folder_path = "../transcriptions"  # Path to the folder containing the .txt files
 
+stopwords = ["beaucoup", "bien", "oui", "non", "bon", "être", "avoir", "pouvoir", "faire",  "envoyer", "aller", "prendre", "devoir", "chose" ]
 # match repeating numbers
 patternNumb = r'\b(\d)(?: \1)+\b'
 # match repeating ... ... ...
@@ -88,12 +93,9 @@ def process_text(text):
     processed_tokens = []
 
     for token in doc:
-        # Lemmatize and remove punctuation, numerical characters, and stop words
-        if token.is_alpha and not token.is_stop:
+        if token.is_alpha and not token.is_stop and token.text.lower() not in stopwords:
             lemma = token.lemma_.lower()
-
-            # Filter tokens based on POS tags (noun, adjective, adverb, verb)
-            if token.pos_ in ['NOUN', 'ADJ', 'ADV', 'VERB', 'PROPN'] and len(token) > 2:
+            if token.pos_ in ['NOUN', 'ADJ', 'ADV', 'VERB', 'PROPN'] and len(lemma) > 2:
                 processed_tokens.append(lemma)
 
     return processed_tokens

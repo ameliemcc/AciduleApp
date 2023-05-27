@@ -8,9 +8,16 @@ conn = sqlite3.connect('/Users/mariemccormick/PycharmProjects/AciduleApp/databas
 cursor = conn.cursor()
 
 # Retrieve the content of the 'lemmas' column from the 'transcription' table
-cursor.execute("SELECT lemmas FROM transcription")
+
+cursor.execute("""
+    SELECT t.lemmas
+    FROM transcription AS t
+    INNER JOIN emission AS e ON t.emission_id = e.id
+    WHERE e.langue = 'French'
+""")
+
+# Fetch the results
 transcriptions = cursor.fetchall()
-print(transcriptions)
 
 # Create an empty list to store the lemmas
 text_corpus = []
