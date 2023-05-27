@@ -51,6 +51,5 @@ def detect_and_update_language():
     # Close the database connection
     conn.close()
 
-
 # Call the function to detect and update the language
 detect_and_update_language()

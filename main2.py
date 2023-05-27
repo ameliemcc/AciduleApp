@@ -8,12 +8,14 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from visualisation.bubble import BubbleChart
 
+
 with open("htmlStyle.html", "r", encoding="utf8") as file:
     html_style = file.read()
 st.set_page_config(page_title='Radio Acidule', page_icon="📻", layout="centered",
                    initial_sidebar_state="auto", menu_items=None)
 
-conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db")
+conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker"
+                       "/AciduleDB.db")
 cursor = conn.cursor()
 
 # Fetch "fichier_nom" values from the "emission" table
@@ -22,7 +24,7 @@ fichier_noms = [fichier_nom[0] for fichier_nom in cursor.fetchall()]
 
 # Fetch "lien" values from the "emission" table
 cursor.execute("SELECT DISTINCT lien FROM emission")
-liens = [fichier_nom[0] for fichier_nom in cursor.fetchall()]
+liens = [lien[0] for lien in cursor.fetchall()]
 
 # Fetch "emission_nom" values from the "emission" table
 cursor.execute("SELECT DISTINCT emission_nom FROM emission")
@@ -40,9 +42,11 @@ cursor.execute("""
 results = cursor.fetchall()
 form_results = [f"{word} ({count})" for word, count in results]
 
+
 def extract_number(string):
     """Function extracting numbers out of the formated list items. """
     return int(string.split('(')[1].split(')')[0])
+
 
 if 'check' not in st.session_state:
     st.session_state['check'] = False
@@ -54,15 +58,15 @@ if st.session_state.check is True:
 if st.session_state.check is False:
     form_results.insert(0, '')
 
-def make_bubbles(words):
-    word, occurrence = zip(*words)
 
+def make_bubbles(words):
+    """Function to make the bubbleplot fig"""
+    word, occurrence = zip(*words)
     # Define the colormap and normalize the values
     colormap = plt.cm.get_cmap('summer')
     normalize = mcolors.Normalize(vmin=min(occurrence), vmax=max(occurrence))
     # Generate a color for each number in the list
     colors = [mcolors.to_hex(colormap(normalize(value))) for value in occurrence]
-
     nouns_dict = {
         'words': list(word),
         'occurrences': list(occurrence),
@@ -80,11 +84,13 @@ def make_bubbles(words):
     ax.autoscale_view()
     return fig_bubble
 
+
 def handle_select():
     """Function handling the actions taken when an emission is selected from the selectbox. """
     st.write(st.session_state.select_emission)
     selected_fichier_nom = st.session_state.select_emission
-    cursor.execute("SELECT date_diffusion FROM emission WHERE emission_nom = ?", (selected_fichier_nom,))
+    cursor.execute("SELECT date_diffusion FROM emission WHERE emission_nom = ?",
+                   (selected_fichier_nom,))
     date = cursor.fetchone()
     date_form = ''.join(date) if date else ""
 
@@ -100,13 +106,14 @@ def handle_select():
             INNER JOIN transcription AS t ON t.id = tfw.transcription_id
             INNER JOIN emission AS e ON e.id = t.emission_id
             WHERE e.emission_nom = ?
-            """, (selected_fichier_nom,))
+            """,
+                   (selected_fichier_nom,)
+                   )
     words = cursor.fetchall()
 
     if words:
         fig_bubble = make_bubbles(words)
         st.header(date_form + ', ' + selected_fichier_nom)
-
         # Display the chart inside a container
         with st.container():
             col1, col2 = st.columns(2)
@@ -135,15 +142,15 @@ def handle_select():
 
 def handle_search():
     """Function handling the actions taken when a frequent word is selected from the selectbox. """
-    st.write('woo')
-    st.write(st.session_state.select_word)
     selected_value = st.session_state.select_word
     selected_word = selected_value.split()[0]
-    cursor.execute("SELECT id FROM freq WHERE word = ?", (selected_word,))
+    cursor.execute("SELECT id FROM freq WHERE word = ?",
+                   (selected_word,))
     ids = [row[0] for row in cursor.fetchall()]
     for id_word in ids:
         # Select the corresponding word_id and transcription_id from the transcription_freq_word table
-        cursor.execute("SELECT word_id, transcription_id FROM transcription_freq_word WHERE word_id = ?",
+        cursor.execute("SELECT word_id, "
+                       "transcription_id FROM transcription_freq_word WHERE word_id = ?",
                        (id_word,))
         # Retrieve the results as a list of tuples (word_id, transcription_id)
         search_results = cursor.fetchall()
@@ -166,38 +173,36 @@ def handle_search():
 
             # Retrieve the associated words as a list of strings
             associated_words = [row[0] for row in cursor.fetchall()]
+            st.write(word)
+            with st.expander(label=str(emission_nom)):
+                word_list = []
+                for word in associated_words:
+                    word_list.append(word)
+                words = ' – '.join(word_list)
+                st.write("Mots les plus fréquents dans cette émission:", words)
+                st.button('Accéder à la transcription de cette émission', key=emission_id)
 
-            # Display the emission information and associated words
-            st.write("Emission Nom:", emission_nom)
-            st.write("Word:", word)
-            word_list = []
-            for word in associated_words:
-                word_list.append(word)
-            words = ' – '.join(word_list)
-            st.write("Associated Words:", words)
-            st.write("---")  # Separator between lines
+
+def sidebar_elements():
+    """Function handling the display of sidebar elements"""
+    st.checkbox('Trier les mots par fréquence', value=False, key='check')
+    st.selectbox('Rechercher un mot fréquent',
+                 form_results,
+                 on_change=handle_search,
+                 key='select_word',
+                 index=0
+                 )
+    st.selectbox('Choisir une émission',
+                 emission_noms,
+                 on_change=handle_select,
+                 key='select_emission'
+                 )
 
 
 def main():
     with st.sidebar.container():
-        st.checkbox(
-            'Trier les mots par fréquence',
-            value=False,
-            key='check'
-        )
-        st.selectbox(
-            'Rechercher un mot fréquent',
-            form_results,
-            on_change=handle_search,
-            key='select_word',
-            index = 0
-        )
-        st.selectbox(
-            "Choisir une émission",
-            emission_noms,
-            on_change=handle_select,
-            key='select_emission'
-        )
+        sidebar_elements()
+
 
 if __name__ == "__main__":
     main()
