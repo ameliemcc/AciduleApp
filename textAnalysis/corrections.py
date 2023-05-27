@@ -33,6 +33,7 @@ for filename in os.listdir(directory):
         # lozanoisse
         # lezanois
         # Yagui
+        # en Seuleillé
 
         with open(file_path, "w") as file:
             file.write(content)

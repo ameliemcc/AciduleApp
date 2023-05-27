@@ -43,6 +43,16 @@ results = cursor.fetchall()
 form_results = [f"{word} ({count})" for word, count in results]
 
 
+if 'show' not in st.session_state:
+    st.session_state['show'] = 'value'
+
+
+def handle_go_to(emission_nom):
+    if 'select_emission' not in st.session_state:
+        st.session_state['select_emission'] = emission_nom
+    handle_select()
+
+
 def extract_number(string):
     """Function extracting numbers out of the formated list items. """
     return int(string.split('(')[1].split(')')[0])
@@ -86,7 +96,7 @@ def make_bubbles(words):
 
 
 def handle_select():
-    """Function handling the actions taken when an emission is selected from the selectbox. """
+    """Function handling the actions taken when an emission is selected to be displayed. """
     st.write(st.session_state.select_emission)
     selected_fichier_nom = st.session_state.select_emission
     cursor.execute("SELECT date_diffusion FROM emission WHERE emission_nom = ?",
@@ -140,47 +150,42 @@ def handle_select():
         st.text("No transcription found for the selected Fichier Nom.")
 
 
+
+
 def handle_search():
-    """Function handling the actions taken when a frequent word is selected from the selectbox. """
     selected_value = st.session_state.select_word
     selected_word = selected_value.split()[0]
-    cursor.execute("SELECT id FROM freq WHERE word = ?",
-                   (selected_word,))
+    cursor.execute("SELECT id FROM freq WHERE word = ?", (selected_word,))
     ids = [row[0] for row in cursor.fetchall()]
     for id_word in ids:
-        # Select the corresponding word_id and transcription_id from the transcription_freq_word table
-        cursor.execute("SELECT word_id, "
-                       "transcription_id FROM transcription_freq_word WHERE word_id = ?",
+        cursor.execute("SELECT word_id, transcription_id FROM transcription_freq_word WHERE word_id = ?",
                        (id_word,))
-        # Retrieve the results as a list of tuples (word_id, transcription_id)
         search_results = cursor.fetchall()
-        # Display the word and transcription_id
         for word_id, transcription_id in search_results:
-            # Get the word corresponding to the word_id from the freq table
             cursor.execute("SELECT word FROM freq WHERE id = ?", (word_id,))
             word = cursor.fetchone()[0]
-            cursor.execute("SELECT emission_id FROM transcription WHERE id = ?",
-                           (transcription_id,))
+            cursor.execute("SELECT emission_id FROM transcription WHERE id = ?", (transcription_id,))
             emission_id = cursor.fetchone()[0]
             cursor.execute("SELECT emission_nom FROM emission WHERE id = ?", (emission_id,))
             emission_nom = cursor.fetchone()[0]
             cursor.execute("""
-                           SELECT f.word
-                           FROM transcription_freq_word AS tfw
-                           JOIN freq AS f ON tfw.word_id = f.id
-                           WHERE tfw.transcription_id = ? AND tfw.word_id != ?
-                           """, (transcription_id, word_id))
+                SELECT f.word
+                FROM transcription_freq_word AS tfw
+                JOIN freq AS f ON tfw.word_id = f.id
+                WHERE tfw.transcription_id = ? AND tfw.word_id != ?
+                """, (transcription_id, word_id))
 
-            # Retrieve the associated words as a list of strings
             associated_words = [row[0] for row in cursor.fetchall()]
             st.write(word)
             with st.expander(label=str(emission_nom)):
+                st.write(emission_id)
                 word_list = []
                 for word in associated_words:
                     word_list.append(word)
                 words = ' – '.join(word_list)
                 st.write("Mots les plus fréquents dans cette émission:", words)
-                st.button('Accéder à la transcription de cette émission', key=emission_id)
+                st.button('Accéder à la transcription de cette émission',
+                          on_click=lambda emission_nom=emission_nom: handle_go_to(emission_nom))
 
 
 def sidebar_elements():

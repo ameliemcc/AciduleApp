@@ -53,7 +53,17 @@ def add_transcription_and_emission(name):
                         two = result[-1].replace("_", " ").strip()
                         em_nom = " : ".join([one, two])
                 else:
-                    em_nom=None
+                    name_pattern2 = r"P\d+_(\w+)_\d+_([^\.]+)\.txt"
+                    words = re.findall(name_pattern2, name)
+                    result = [item for item in words[0]]
+                    if len(result) > 0:
+                        if result[-1] == "":
+                            title = result[0].replace("_", " ").strip()
+                            em_nom = title
+                        else:
+                            one = result[0].replace("_", " ").strip()
+                            two = result[-1].replace("_", " ").strip()
+                            em_nom = " : ".join([one, two])
             except (AttributeError, IndexError):
                 em_nom = None
             fichier_nom = name
