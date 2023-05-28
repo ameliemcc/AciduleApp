@@ -1,4 +1,4 @@
-import pprint
+import os
 from collections import defaultdict
 from gensim import corpora
 import sqlite3
@@ -6,7 +6,8 @@ import spacy
 nlp_model = spacy.load("fr_core_news_sm")
 
 # Establish a connection to the SQLite database
-conn = sqlite3.connect('/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db')
+file_path = os.path.join("database_maker", "AciduleDB.db")
+conn = sqlite3.connect(file_path)
 cursor = conn.cursor()
 
 # Retrieve the content of the 'lemmas' column from the 'transcription' table
@@ -59,17 +60,8 @@ for text in texts:
     for token in text:
         frequency[token] += 1
 
-# Only keep words that appear more than once
-#processed_corpus = [[token for token in text if frequency[token] > 1] for text in texts]
-#pprint.pprint(texts)
-#texts = process_corpus(texts)
+#dictionary = corpora.Dictionary(texts)
+#corpus = [dictionary.doc2bow(doc) for doc in texts]
 
-#pprint.pprint(texts)
-# Create a dictionary and corpus using Gensim
-dictionary = corpora.Dictionary(texts)
-corpus = [dictionary.doc2bow(doc) for doc in texts]
 
-#print(dictionary)
-'''print(corpus)
-print(texts)'''
 print(texts[0])

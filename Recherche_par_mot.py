@@ -1,7 +1,7 @@
 """
 Provides the main page structure of the code, the sidebar selectboxes and display of transcriptions
 """
-
+import os
 import sqlite3
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -14,8 +14,9 @@ with open("htmlStyle.html", "r", encoding="utf8") as file:
 st.set_page_config(page_title='Radio Acidule', page_icon="📻", layout="centered",
                    initial_sidebar_state="auto", menu_items=None)
 
-conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker"
-                       "/AciduleDB.db")
+file_path = os.path.join("database_maker", "AciduleDB.db")
+conn = sqlite3.connect(file_path)
+
 cursor = conn.cursor()
 
 # Fetch "fichier_nom" values from the "emission" table
@@ -97,12 +98,10 @@ def make_bubbles(words):
 
 def handle_select():
     """Function handling the actions taken when an emission is selected to be displayed. """
-    st.write(st.session_state.select_emission)
     selected_fichier_nom = st.session_state.select_emission
     cursor.execute("SELECT date_diffusion FROM emission WHERE titre = ?",
                    (selected_fichier_nom,))
     date = cursor.fetchone()
-    print(date)
     date_form = str(date[0]).replace("_", " ")
     # Query the database to fetch the corresponding "texte" based on the selected "fichier_nom"
     cursor.execute(
@@ -120,19 +119,18 @@ def handle_select():
                    (selected_fichier_nom,)
                    )
     words = cursor.fetchall()
-
+    cursor.execute("SELECT emission_nom FROM emission WHERE titre = ?",
+                   (selected_fichier_nom,))
+    emission_name = cursor.fetchone()
     if words:
         fig_bubble = make_bubbles(words)
-        st.header(date_form + ', ' + selected_fichier_nom)
+        if date_form == 'None':
+            st.header(selected_fichier_nom)
+        else:
+            st.header(date_form + ', ' + emission_name[0])
         # Display the chart inside a container
         with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                st.write("Thèmes")
-                #st.components.v1.html(html_code)
-            with col2:
-                st.write("Mots fréquents")
-                st.pyplot(fig=fig_bubble)
+            st.pyplot(fig=fig_bubble)
     else:
         st.text("No transcription found for the selected Fichier Nom.")
     if texte:
@@ -174,9 +172,7 @@ def handle_search():
                 """, (transcription_id, word_id))
 
             associated_words = [row[0] for row in cursor.fetchall()]
-            st.write(word)
             with st.expander(label=str(titre)):
-                st.write(emission_id)
                 word_list = []
                 for word in associated_words:
                     word_list.append(word)
@@ -204,6 +200,7 @@ def sidebar_elements():
 
 def main():
     with st.sidebar.container():
+        st.title("AciduleApp")
         sidebar_elements()
 
 

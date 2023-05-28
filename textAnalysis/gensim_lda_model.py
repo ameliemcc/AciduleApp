@@ -1,8 +1,9 @@
-from textAnalysis.gensim_preprocessing import corpus, dictionary, texts
+from textAnalysis.gensim_preprocessing import  texts
 import numpy as np
 import json
 import glob
 from streamlit import components
+import os
 import sqlite3
 import gensim
 import gensim.corpora as corpora
@@ -29,7 +30,6 @@ def make_trigrams(textss):
 
 data_bigrams = make_bigrams(texts)
 data_bigrams_trigrams = make_trigrams(data_bigrams)
-#print(data_bigrams_trigrams[0])
 
 # dictionary
 id2word = corpora.Dictionary(data_bigrams_trigrams)
@@ -72,21 +72,13 @@ lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                            passes=15,
                                            alpha="auto")
 
-#lda_model.save("models/ldamodel.model")
-print('corpus-1')
-test_doc = corpus[-1]
-print(type(test_doc))
-print('test doc')
-print(test_doc)
-print(lda_model[test_doc])
-#print(new_vector)
-#pyLDAvis.enable_notebook()
 vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word, mds="mmds", R=30)
 html_string = pyLDAvis.prepared_data_to_html(vis)
 
 
 # Establish a connection to the database
-conn = sqlite3.connect("/Users/mariemccormick/PycharmProjects/AciduleApp/database_maker/AciduleDB.db")
+file_path = os.path.join("database_maker", "AciduleDB.db")
+conn = sqlite3.connect(file_path)
 cur = conn.cursor()
 
 # Fetch the rows from the transcription table
@@ -116,7 +108,6 @@ for row in rows:
     sorted_data = sorted(doc_topics, key=lambda x: x[1], reverse=True)
 
     topic_list = [(index, value) for index, value in sorted_data if value > 0.2]
-    print(f"Emission ID: {emission_id}, Topics: {topic_list}")
     topic_string = str(topic_list)  # Convert topic_list to a string
    # cur.execute("UPDATE emission SET topics = ? WHERE id = ?", (topic_string, emission_id))
 
