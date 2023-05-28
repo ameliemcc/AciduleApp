@@ -17,6 +17,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS emission (
             date_diffusion TEXT,
             lien TEXT,
             langue TEXT,
+            topics TEXT,
             transcription_id INTEGER,
             FOREIGN KEY(transcription_id) REFERENCES transcription(id)
             );""")
@@ -28,21 +29,6 @@ cur.execute("""CREATE TABLE IF NOT EXISTS transcription (
             lemmas TEXT,
             emission_id INTEGER,
             FOREIGN KEY(emission_id) REFERENCES emission(id)
-            );""")
-
-# Create "topic" table
-cur.execute("""CREATE TABLE IF NOT EXISTS topic (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic TEXT
-            );""")
-
-# Create "transcription_topic" table
-cur.execute("""CREATE TABLE IF NOT EXISTS transcription_topic (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            transcription_id INTEGER,
-            topic_id INTEGER,
-            FOREIGN KEY(transcription_id) REFERENCES transcription(id),
-            FOREIGN KEY(topic_id) REFERENCES topic(id)
             );""")
 
 # Create "transcription_freq_word" table

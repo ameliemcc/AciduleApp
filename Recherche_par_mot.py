@@ -102,12 +102,8 @@ def handle_select():
     cursor.execute("SELECT date_diffusion FROM emission WHERE titre = ?",
                    (selected_fichier_nom,))
     date = cursor.fetchone()
-    if date:
-        date_form = ''.join(date)
-    else:
-        pass
-    #date_form = ''.join(date) if date else ""
-
+    print(date)
+    date_form = str(date[0]).replace("_", " ")
     # Query the database to fetch the corresponding "texte" based on the selected "fichier_nom"
     cursor.execute(
         "SELECT t.texte FROM transcription t JOIN emission e ON t.emission_id = e.id WHERE e.titre = ?",
@@ -152,8 +148,6 @@ def handle_select():
         )
     else:
         st.text("No transcription found for the selected Fichier Nom.")
-
-
 
 
 def handle_search():

@@ -10,9 +10,10 @@ for filename in os.listdir(directory):
         with open(file_path, "r") as file:
             content = file.read()
 
-        content = re.sub(r"leuze\s|lozane\s|losanne\s|lozan\s|l'(O|o)usanne\s|losan\s|lausann\s|alausanne\s|losann\s", "lausanne ", content, flags=re.IGNORECASE)
+
+        content = re.sub(r"leuze\s|lozane\s|losanne\s|lozan\s|l'(O|o)usanne\s|losan\s|lausann\s|alausanne\s|losann\s|leusanne\s", "lausanne ", content, flags=re.IGNORECASE)
         content = re.sub(r"lausanneoise\s|lozanoise\s|Los Anoises|loisanoise\s|lozanoisse\s", "lausannoise ", content, flags=re.IGNORECASE)
-        content = re.sub(r"lausanneois\s|lozanois\s|lezanoi\s|losanoi\s|lezanois\s|loisanoi\s|loisanoin\s", "lausannois ", content, flags=re.IGNORECASE)
+        content = re.sub(r"lausanneois\s|lozanois\s|lezanoi\s|losanoi\s|lezanois\s|loisanoi\s|loisanoin\s|nozanois", "lausannois ", content, flags=re.IGNORECASE)
         content = re.sub(r"asacidule\s|asideul\s|de sidule\s|assydul\s|sidule\s|aacidule\s|la sidule\s", "acidule ", content, flags=re.IGNORECASE)
         content = re.sub(r"yagy|Yagui", "jaggi ", content, flags=re.IGNORECASE)
         content = re.sub(r"venage", "venoge ", content, flags=re.IGNORECASE)
@@ -26,6 +27,10 @@ for filename in os.listdir(directory):
         content = re.sub(r"sougar", "sous-gare ", content, flags=re.IGNORECASE)
         content = re.sub(r"en Seuleillé", "ensoleillé ", content, flags=re.IGNORECASE)
         content = re.sub(r"jandaniell", "Jean-Daniel ", content, flags=re.IGNORECASE)
+        content = re.sub(r"aiti", "Haïti ", content, flags=re.IGNORECASE)
+        content = re.sub(r"écosser", "écossais ", content, flags=re.IGNORECASE)
+
+
 
         # noyenne = doyenne
         with open(file_path, "w") as file:
