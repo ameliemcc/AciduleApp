@@ -1,13 +1,13 @@
 """
 Builds the page within which the user can search by topic
 """
+from textAnalysis.gensim_lda_model import html_string
 import os
 import sqlite3
 import warnings
 import streamlit as st
 from streamlit import components
 warnings.filterwarnings("ignore", category=DeprecationWarning)
-#from textAnalysis.gensim_lda_model import html_string
 
 file_path = os.path.join("database_maker", "AciduleDB.db")
 conn = sqlite3.connect(file_path)
