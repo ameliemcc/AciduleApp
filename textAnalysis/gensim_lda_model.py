@@ -1,20 +1,17 @@
-from textAnalysis.gensim_preprocessing import  texts
-import numpy as np
-import json
-import glob
-from streamlit import components
+"""
+Training the LDA model and applying it to the emissions that are in french
+"""
 import os
-import sqlite3
-import gensim
-import gensim.corpora as corpora
-from gensim.utils import simple_preprocess
-from gensim.models import CoherenceModel
-import pyLDAvis
 import pyLDAvis.gensim
+import pyLDAvis
+import gensim
+from gensim import corpora
+from gensim.models import TfidfModel
+from textAnalysis.gensim_preprocessing import  texts
+import sqlite3
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
-import streamlit as st
-from gensim.models import TfidfModel
+
 
 bigrams_phrases = gensim.models.Phrases(texts, min_count=5, threshold=100)
 trigram_phrases = gensim.models.Phrases(bigrams_phrases[texts], threshold=100)
@@ -23,9 +20,11 @@ bigram = gensim.models.phrases.Phraser(bigrams_phrases)
 trigram = gensim.models.phrases.Phraser(trigram_phrases)
 
 def make_bigrams(textss):
+    """Define words that go together often"""
     return [bigram[doc] for doc in textss]
 
 def make_trigrams(textss):
+    """Define words that go together often (groups of 3)"""
     return [trigram[bigram[doc]] for doc in textss]
 
 data_bigrams = make_bigrams(texts)
@@ -41,25 +40,27 @@ corpus = [id2word.doc2bow(text) for text in texts_removal]
 
 tfidf = TfidfModel(corpus, id2word=id2word )
 
-low_value = 0.03
+LOW_VALUE = 0.03
 words = []
 words_missing_in_tfidf = []
 
-def process_corpus(corpus):
-    for i in range(len(corpus)):
-        bow = corpus[i]
+def process_corpus(corpus_proc):
+    """drop words that come back too often (low_value)"""
+    for i in range(len(corpus_proc)):
+        bow = corpus_proc[i]
         low_value_words = []
         tfidf_ids = [id for id, value in tfidf[bow]]
         bow_ids = [id for id, value in bow]
-        low_value_words = [id for id, value in tfidf[bow] if value < low_value]
+        low_value_words = [id for id, value in tfidf[bow] if value < LOW_VALUE]
         #drops = low_value_words + words_missing_in_tfidf
         drops = low_value_words
         for item in drops:
             words.append(id2word[item])
         words_missing_in_tfidf = [id for id in bow_ids if id not in tfidf_ids]
-        new_bow = [b for b in bow if b[0] not in low_value_words and b[0] not in words_missing_in_tfidf]
-        corpus[i] = new_bow
-    return corpus
+        new_bow = [b for b in bow if b[0] not in low_value_words and b[0] not in
+                   words_missing_in_tfidf]
+        corpus_proc[i] = new_bow
+    return corpus_proc
 
 corpus = process_corpus(corpus)
 
@@ -76,13 +77,10 @@ vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word, mds="mmds", R=30)
 html_string = pyLDAvis.prepared_data_to_html(vis)
 
 
-# Establish a connection to the database
 file_path = os.path.join("database_maker", "AciduleDB.db")
 conn = sqlite3.connect(file_path)
 cur = conn.cursor()
 
-# Fetch the rows from the transcription table
-#cur.execute("SELECT emission_id, lemmas FROM transcription")
 
 cur.execute("""
     SELECT t.emission_id, t.lemmas
@@ -92,15 +90,10 @@ cur.execute("""
 """)
 rows = cur.fetchall()
 
-def Sort(sub_li):
-    sub_li.sort(key=lambda x: x[1])
-    sub_li.reverse()
-    return sub_li
 
 for row in rows:
     emission_id, lemmas = row
     lemma_list = lemmas.split()
-    # Convert the lemma list to bag-of-words representation
     doc_bow = id2word.doc2bow(lemma_list)
 
     # Get the topics for the document
@@ -115,4 +108,3 @@ for row in rows:
 conn.commit()
 
 conn.close()
-

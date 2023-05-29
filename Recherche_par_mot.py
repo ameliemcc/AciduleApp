@@ -105,7 +105,8 @@ def handle_select():
     date_form = str(date[0]).replace("_", " ")
     # Query the database to fetch the corresponding "texte" based on the selected "fichier_nom"
     cursor.execute(
-        "SELECT t.texte FROM transcription t JOIN emission e ON t.emission_id = e.id WHERE e.titre = ?",
+        "SELECT t.texte FROM transcription t JOIN emission e ON "
+        "t.emission_id = e.id WHERE e.titre = ?",
         (selected_fichier_nom,))
     texte = cursor.fetchone()
     cursor.execute("""
@@ -149,20 +150,24 @@ def handle_select():
 
 
 def handle_search():
+    """Defines what happens when a search request is passed"""
     selected_value = st.session_state.select_word
     selected_word = selected_value.split()[0]
     cursor.execute("SELECT id FROM freq WHERE word = ?", (selected_word,))
     ids = [row[0] for row in cursor.fetchall()]
     for id_word in ids:
-        cursor.execute("SELECT word_id, transcription_id FROM transcription_freq_word WHERE word_id = ?",
+        cursor.execute("SELECT word_id, transcription_id FROM "
+                       "transcription_freq_word WHERE word_id = ?",
                        (id_word,))
         search_results = cursor.fetchall()
         for word_id, transcription_id in search_results:
             cursor.execute("SELECT word FROM freq WHERE id = ?", (word_id,))
             word = cursor.fetchone()[0]
-            cursor.execute("SELECT emission_id FROM transcription WHERE id = ?", (transcription_id,))
+            cursor.execute("SELECT emission_id FROM transcription WHERE id = ?",
+                           (transcription_id,))
             emission_id = cursor.fetchone()[0]
-            cursor.execute("SELECT titre FROM emission WHERE id = ?", (emission_id,))
+            cursor.execute("SELECT titre FROM emission WHERE id = ?",
+                           (emission_id,))
             titre = cursor.fetchone()[0]
             cursor.execute("""
                 SELECT f.word
