@@ -6,16 +6,28 @@ import sqlite3
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from visualisation.bubble import BubbleChart
+#from AciduleApp.view.bubble import BubbleChart
+from view.bubble import BubbleChart
 
 
-with open("htmlStyle.html", "r", encoding="utf8") as file:
+# Get the current directory
+current_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to htmlStyle.html
+html_style_path = os.path.join(current_directory, "view/htmlStyle.html")
+
+# Open the file
+with open(html_style_path, "r", encoding="utf8") as file:
     html_style = file.read()
+
+#with open("../view/htmlStyle.html", "r", encoding="utf8") as file:
+  #  html_style = file.read()
 st.set_page_config(page_title='Radio Acidule', page_icon="📻", layout="centered",
                    initial_sidebar_state="auto", menu_items=None)
 
-file_path = os.path.join("database_maker", "AciduleDB.db")
-conn = sqlite3.connect(file_path)
+db_file_path = os.path.join(current_directory, "model/AciduleDB.db")
+#file_path = os.path.join("../model", "AciduleDB.db")
+conn = sqlite3.connect(db_file_path)
 
 cursor = conn.cursor()
 
@@ -62,12 +74,16 @@ def extract_number(string):
 if 'check' not in st.session_state:
     st.session_state['check'] = False
 
-if st.session_state.check is True:
+#if st.session_state.check is True:
+if st.session_state['check'] is True:
     form_results = sorted(form_results, key=extract_number, reverse=True)
     form_results.insert(0, '')
 
-if st.session_state.check is False:
+#if st.session_state.check is False:
+if st.session_state['check'] is False:
+
     form_results.insert(0, '')
+
 
 
 def make_bubbles(words):

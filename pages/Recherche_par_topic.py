@@ -1,7 +1,6 @@
 """
 Builds the page within which the user can search by topic
 """
-from textAnalysis.gensim_lda_model import html_string
 import os
 import sqlite3
 import warnings
@@ -9,16 +8,21 @@ import streamlit as st
 from streamlit import components
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-file_path = os.path.join("database_maker", "AciduleDB.db")
+
+file_path = os.path.join("model", "AciduleDB.db")
 conn = sqlite3.connect(file_path)
 
 cursor = conn.cursor()
+
+cursor.execute("SELECT html_content FROM lda_model_info")
+model_html = cursor.fetchone()
+model_html = model_html[0] if model_html else None
 
 emissions = {}
 
 with st.sidebar.container():
     st.title("AciduleApp")
-st.components.v1.html(html_string, width=1200, height=600, scrolling=True)
+st.components.v1.html(model_html, width=1200, height=600, scrolling=True)
 
 for i in range(1, 12):
     cursor.execute("""

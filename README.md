@@ -17,7 +17,7 @@ Start the Streamlit app by running:
 streamlit run Recherche_par_mot.py
 ```
 ## Functionalities
-The app presents two main pages. 
+The app presents two main pages. \
 *Recherche par mot* : Allows the user to write a word they wish to look for in the transcriptions, or to select one from a scrollable list. 
 The user can also pick a title of an *émission* to have its transcription displayed. \
 *Recherche par topic* : This page might take some time to load, as it displays the LDA Intertopic Distance Map, which presents the topics that come up in the corpus. 
