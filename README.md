@@ -1,28 +1,39 @@
 # AciduleApp
-## Cours UNIL : Projet de développement logiciel
+## Projet de développement logiciel
 Professeur : Davide Picca \
-Etudiante : Amélie McCormick
+Etudiante : Amélie McCormick \
+En collaboration avec les [Archives de la Ville de Lausanne] (https://www.lausanne.ch/vie-pratique/culture/bibliotheques-et-archives/archives.html?map=true&mode=)
 
 ## Introduction
-Radio Acidule was a local station that covered news from Lausanne & beyond, from 1984 to 1999. This Web App suggests a new way to explore the Acidule corpus.  
-Some recordings are available online on the Web TV run by the Archives of Lausanne : https://www.dartfish.tv/Videos?CR=p33203c501361#AQEBAAEEAXGmBwAAAQEHAAABAgEBBgdhY2lkdWxlAQAAAAAA 
-## Usage instructions
-Make sure the necessary packages are installed by running:
+La station lausannoise Radio Acidule a diffusé des émissions touchant des thèmes variés entre 1984 et 1999. Des 
+reportages sur la gestion des eaux usées, aux retranscriptions en direct des séances du conseil communal, en passant par
+des émissions destinées spécifiquement au retraités, les ondes d'Acidule ont porté des voix très diverses. 
+
+## But du projet
+- Transcription des émissions du corpus Acidule
+- Analyse textuelle ayant pour but de déduire les thèmes abordés dans les émissions
+- Développement d'une web app permettant l'accès aux archives
+Cette App permet d'explorer le corpus Acidule 
+Les enregistrements sont disponibles en ligne sur la Web TV des Archives de Lausanne: https://www.dartfish.tv/Videos?CR=p33203c501361#AQEBAAEEAXGmBwAAAQEHAAABAgEBBgdhY2lkdWxlAQAAAAAA
+
+## Utilisation
+Assurez-vous d'avoir installé les packages nécessaires en exécutant :
 ```
  pip install -r requirements.txt
 ```
 
-Start the Streamlit app by running:
+Démarrez l'application en exécutant :
 ```
 streamlit run Recherche_par_mot.py
 ```
-## Functionalities
-The app presents two main pages. \
-*Recherche par mot* : Allows the user to write a word they wish to look for in the transcriptions, or to select one from a scrollable list. 
-The user can also pick a title of an *émission* to have its transcription displayed. \
-*Recherche par topic* : This page might take some time to load, as it displays the LDA Intertopic Distance Map, which presents the topics that come up in the corpus. 
-Under the graph, the user can see which *émissions* are most linked to which topic. 
+## Fonctionnalités
+L'application présente deux pages principales.\
+*Recherche par mot* : Permet à l'utilisateur d'écrire un mot qu'il souhaite rechercher dans les transcriptions, ou de le sélectionner dans une liste déroulante.
+L'utilisateur peut également choisir le titre d'une émission pour afficher sa transcription.
+*Recherche par topic* : Cette page affiche la carte de distance intertopic LDA, qui offre une représentation visuelle des thèmes qui apparaissent dans le corpus.
+Sous le graphique, l'utilisateur peut voir quelles émissions sont le plus liées à quel sujet.
 
-## Project structure
+
+## Structure du projet
 The repository also contains the code used to format the data and add it to the database. The two pages that make the app are *Recherche_par_topic.py* and *Recherche_par_mot.py*.
 
