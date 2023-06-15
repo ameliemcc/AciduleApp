@@ -12,16 +12,17 @@ import re
 
 themes = {
     1: "Thème 1",
-    2: "Thème 2",
-    3: "Thème 3: Logement, droits des locataires",
-    4: "Thème 4: Sport, compétition, espace",
-    5: "Thème 5: Conseil communal, politique locale",
-    6: "Thème 6: Russie, politique étrangère",
-    7: "Thème 7: Politique suisse, vote",
-    8: "Thème 8: Vie culturelle lausannoise",
-    9: "Thème 9: Médias, droits de l\'Homme, informations internationales",
-    10: "Thème 10",
-    11: "Thème 11: Lois, gouvernement"
+    2: "Thème 2 : Politique locale et fédérale",
+    3: "Thème 3 : Sport, compétition",
+    4: "Thème 4 : Exploration spatiale, politique et économie",
+    5: "Thème 5 : Logement, revendications sociales",
+    6: "Thème 6 :  Astronomie, énergie",
+    7: "Thème 7 : Astronomie, administration",
+    8: "Thème 8 : Guerre, musique",
+    9: "Thème 9 : Théâtre, musique, spectacle",
+    10: "Thème 10 : Université, recherche, administration",
+    11: "Thème 11: Géopolitique, droits de l'homme",
+    12: "Thème 12 : Eau	"
 }
 current_directory = os.path.dirname(os.path.abspath(__file__))
 

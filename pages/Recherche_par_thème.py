@@ -31,7 +31,7 @@ st.components.v1.html(model_html, width=1200, height=600, scrolling=True)
 
 cached_results = {}
 
-for i in range(1, 12):
+for i in range(1, 13):
     cursor.execute("""
         SELECT titre, id
         FROM emission
@@ -45,12 +45,11 @@ st.write('---')
 def display_emissions(expander_label, topic_number, emissions):
     with st.expander(expander_label, expanded=False):
         for row in emissions[topic_number]:
-
             titre = row[0]
             st.write(titre)
             em_id = row[1]
             key_disp = (str(em_id) + '_' + str(topic_number) )
-            button_label = f"Accéder à la transcription de cette émission (ID: {key_disp})"
+            button_label = f"Accéder à la transcription de cette émission"
             if st.button(button_label, key=key_disp):
                 # Check if the result is already cached
                 if key_disp in cached_results:
@@ -66,17 +65,19 @@ def display_emissions(expander_label, topic_number, emissions):
 with st.container():
     col1, col2 = st.columns(2)
     with col1:
-        display_emissions('Emissions thème 1', 1, emissions)
-        display_emissions('Emissions thème 3: Logement, droits des locataires', 3, emissions)
-        display_emissions('Emissions thème 5: Conseil communal, politique locale', 5, emissions)
-        display_emissions('Emissions thème 7: Astronomie, administration', 7, emissions)
-        display_emissions('Emissions thème 9: Médias, droits de l\'Homme, informations internationales', 9, emissions)
-        display_emissions('Emissions thème 11: Lois, gouvernement', 11, emissions)
+        display_emissions("Thème 1", 1, emissions)
+        display_emissions("Thème 3 : Sport, compétition", 3, emissions)
+        display_emissions("Thème 5 : Logement, revendications sociales", 5, emissions)
+        display_emissions("Thème 7 : Astronomie, administration", 7, emissions)
+        display_emissions("Thème 9 : Théâtre, musique, spectacle", 9, emissions)
+        display_emissions("Thème 11: Géopolitique, droits de l'homme", 11, emissions)
     with col2:
-        display_emissions('Emissions thème 2', 2, emissions)
-        display_emissions('Emissions thème 4: Sport, compétition, espace', 4, emissions)
-        display_emissions('Emissions thème 6: Russie, politique étrangère', 6, emissions)
-        display_emissions('Emissions thème 8: Vie culturelle lausannoise', 8, emissions)
-        display_emissions('Emissions thème 10', 10, emissions)
+        display_emissions("Thème 2 : Politique locale et fédérale", 2, emissions)
+        display_emissions( "Thème 4 : Exploration spatiale, politique et économie", 4, emissions)
+        display_emissions("Thème 6 :  Astronomie, énergie", 6, emissions)
+        display_emissions("Thème 8 : Guerre, musique",8, emissions)
+        display_emissions("Thème 10 : Université, recherche, administration", 10, emissions)
+        display_emissions("Thème 12 : Eau", 12, emissions)
+
 
 conn.close()
