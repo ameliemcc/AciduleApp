@@ -6,11 +6,9 @@ import sqlite3
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-#from AciduleApp.view.bubble import BubbleChart
 from view.bubble import BubbleChart
+import re
 
-
-# Get the current directory
 
 themes = {
     1: "Thème 1",
@@ -160,16 +158,24 @@ def handle_select():
     cursor.execute(" SELECT topics FROM emission WHERE titre = ?",(selected_fichier_nom,))
     result = cursor.fetchone()
 
+    cursor.execute("SELECT fichier_nom FROM emission WHERE titre = ?",
+                   (selected_fichier_nom,))
+    fich = cursor.fetchone()
+    fich_nom = fich[0]
+    cote = re.sub(r"\.txt$", "", fich_nom)
 
     if words:
         fig_bubble = make_bubbles(words)
         if date_form == 'None':
             st.header(selected_fichier_nom)
+            st.caption(cote)
         else:
             if emission_name[0] == None:
                 st.header(selected_fichier_nom)
+                st.caption(cote)
             else:
                 st.header(date_form + ', ' + emission_name[0])
+                st.caption(cote)
         # Display the chart inside a container
         with st.container():
             st.pyplot(fig=fig_bubble)
@@ -190,7 +196,7 @@ def handle_select():
         st.download_button(
             label='Télécharger la transcription',
             data=texte[0],
-            file_name=selected_fichier_nom
+            file_name=fich[0]
         )
     else:
         st.text("No transcription found for the selected Fichier Nom.")

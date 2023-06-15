@@ -15,7 +15,7 @@ def get_lang_detector(nlp, name):
 
 def detect_and_update_language():
     """Function to detect the language and add it to the DB"""
-    file_path = os.path.join("model", "AciduleDB.db")
+    file_path = os.path.join(os.path.dirname(__file__), "AciduleDB.db")
     conn = sqlite3.connect(file_path)
     cursor = conn.cursor()
 

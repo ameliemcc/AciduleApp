@@ -6,7 +6,7 @@ import sqlite3
 import warnings
 import streamlit as st
 from streamlit import components
-from Recherche_par_mot import handle_select
+from Recherche_par_mot import handle_go_to
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 emissions = {}
@@ -29,11 +29,6 @@ with st.sidebar.container():
     st.markdown(f"<p style='text-align: justify;'>{text}</p>", unsafe_allow_html=True)
 st.components.v1.html(model_html, width=1200, height=600, scrolling=True)
 
-def handle_go_to(titre):
-    #if 'select_emission' not in st.session_state:
-       # st.session_state['select_emission'] = titre
-    st.session_state['select_emission'] = titre
-    handle_select()
 cached_results = {}
 
 for i in range(1, 12):
@@ -74,7 +69,7 @@ with st.container():
         display_emissions('Emissions thème 1', 1, emissions)
         display_emissions('Emissions thème 3: Logement, droits des locataires', 3, emissions)
         display_emissions('Emissions thème 5: Conseil communal, politique locale', 5, emissions)
-        display_emissions('Emissions thème 7: Politique suisse, vote', 7, emissions)
+        display_emissions('Emissions thème 7: Astronomie, administration', 7, emissions)
         display_emissions('Emissions thème 9: Médias, droits de l\'Homme, informations internationales', 9, emissions)
         display_emissions('Emissions thème 11: Lois, gouvernement', 11, emissions)
     with col2:

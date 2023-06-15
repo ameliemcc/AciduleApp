@@ -77,12 +77,6 @@ vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word, mds="mmds", R=30)
 
 html_string = pyLDAvis.prepared_data_to_html(vis)
 
-print(html_string)
-
-
-
-import sqlite3
-
 
 file_path = os.path.join(os.path.dirname(__file__), "AciduleDB.db")
 conn = sqlite3.connect(file_path)
@@ -99,19 +93,6 @@ id2word_str = str(id2word)
 cur.execute("INSERT INTO lda_model_info (id2word_content) VALUES (?)", (id2word_str,))
 lda_model_str = str(lda_model)
 cur.execute("INSERT INTO lda_model_info (lda_model_content) VALUES (?)", (lda_model_str,))
-
-
-
-# Commit the transaction and close the connection
-conn.commit()
-conn.close()
-
-#file_path = os.path.join("model", "AciduleDB.db")
-#conn = sqlite3.connect(file_path)
-'''
-file_path = os.path.join(os.path.dirname(__file__), "AciduleDB.db")
-conn = sqlite3.connect(file_path)
-cur = conn.cursor()
 
 
 cur.execute("""
@@ -131,13 +112,10 @@ for row in rows:
     # Get the topics for the document
     doc_topics = lda_model.get_document_topics(doc_bow)
     sorted_data = sorted(doc_topics, key=lambda x: x[1], reverse=True)
-    #print("Emission id : " + emission_id + "Probabilités: " + sorted_data)
     topic_list = [(index, value) for index, value in sorted_data if value > 0.2]
     topic_string = str(topic_list)  # Convert topic_list to a string
-   # cur.execute("UPDATE emission SET topics = ? WHERE id = ?", (topic_string, emission_id))
+    cur.execute("UPDATE emission SET topics = ? WHERE id = ?", (topic_string, emission_id))
 
-
+# Commit the transaction and close the connection
 conn.commit()
-
 conn.close()
-'''

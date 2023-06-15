@@ -1,7 +1,7 @@
 import os
 import re
 
-DIRECTORY = "../transcriptions"
+DIRECTORY = "../docs/transcriptions"
 
 for filename in os.listdir(DIRECTORY):
     if filename.endswith(".txt"):

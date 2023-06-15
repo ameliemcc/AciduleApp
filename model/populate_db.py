@@ -8,8 +8,11 @@ from collections import Counter
 import spacy
 
 nlp = spacy.load("fr_core_news_sm")
-file_path = os.path.join("model", "AciduleDB.db")
+
+file_path = os.path.join(os.path.dirname(__file__), "AciduleDB.db")
 conn = sqlite3.connect(file_path)
+# Connect to the SQLite database
+
 cursor = conn.cursor()
 
 FOLDER_PATH = "../docs/transcriptions"
