@@ -23,6 +23,8 @@ model_html = model_html[0] if model_html else None
 
 with st.sidebar.container():
     st.title("AciduleApp")
+    text = "Ce graphique (carte de distance interthématique) est utile pour visualiser les relations entre différents sujets dans l'ensemble des transcriptions du corpus Acidule. Il permet de représenter graphiquement la proximité ou l'éloignement entre les différents thèmes abordés. On peut donc s'en servir pour identifier les regroupements de sujets similaires. "
+    st.markdown(f"<p style='text-align: justify;'>{text}</p>", unsafe_allow_html=True)
 st.components.v1.html(model_html, width=1200, height=600, scrolling=True)
 
 def handle_go_to(titre):

@@ -17,8 +17,11 @@ for filename in os.listdir(DIRECTORY):
         content = re.sub(r"lausanneois\s|lozanois\s|lezanoi\s|losanoi\s|lezanois\s|"
                          r"loisanoi\s|loisanoin\s|nozanois", "lausannois ", content,
                          flags=re.IGNORECASE)
-        content = re.sub(r"asacidule\s|asideul\s|de sidule\s|assydul\s|sidule\s|"
+        content = re.sub(r"asacidule\s|asideul\s|de sidule\s|Asidule\s|assydul\s|sidule\s|"
                          r"aacidule\s|la sidule\s", "acidule ", content, flags=re.IGNORECASE)
+        content = re.sub(r"Ivétiagi", "Yvette Jaggi ", content, flags=re.IGNORECASE)
+        content = re.sub(r"Palue", "Palud", content, flags=re.IGNORECASE)
+
         content = re.sub(r"yagy|Yagui", "jaggi ", content, flags=re.IGNORECASE)
         content = re.sub(r"venage", "venoge ", content, flags=re.IGNORECASE)
         content = re.sub(r"gol", "goal ", content, flags=re.IGNORECASE)
@@ -33,6 +36,11 @@ for filename in os.listdir(DIRECTORY):
         content = re.sub(r"jandaniell", "Jean-Daniel ", content, flags=re.IGNORECASE)
         content = re.sub(r"aiti", "Haïti ", content, flags=re.IGNORECASE)
         content = re.sub(r"écosser", "écossais ", content, flags=re.IGNORECASE)
+        content = re.sub(r"écoce", "Écosse ", content, flags=re.IGNORECASE)
+        content = re.sub(r"cronique", "chronique ", content, flags=re.IGNORECASE)
+        content = re.sub(r"buhaj", "Buache ", content, flags=re.IGNORECASE)
+
+
 
 
 

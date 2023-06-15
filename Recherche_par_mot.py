@@ -11,6 +11,20 @@ from view.bubble import BubbleChart
 
 
 # Get the current directory
+
+themes = {
+    1: "Thème 1",
+    2: "Thème 2",
+    3: "Thème 3: Logement, droits des locataires",
+    4: "Thème 4: Sport, compétition, espace",
+    5: "Thème 5: Conseil communal, politique locale",
+    6: "Thème 6: Russie, politique étrangère",
+    7: "Thème 7: Politique suisse, vote",
+    8: "Thème 8: Vie culturelle lausannoise",
+    9: "Thème 9: Médias, droits de l\'Homme, informations internationales",
+    10: "Thème 10",
+    11: "Thème 11: Lois, gouvernement"
+}
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Construct the path to htmlStyle.html
@@ -142,18 +156,29 @@ def handle_select():
     cursor.execute("SELECT emission_nom FROM emission WHERE titre = ?",
                    (selected_fichier_nom,))
     emission_name = cursor.fetchone()
+
+    cursor.execute(" SELECT topics FROM emission WHERE titre = ?",(selected_fichier_nom,))
+    result = cursor.fetchone()
+
+
     if words:
         fig_bubble = make_bubbles(words)
         if date_form == 'None':
             st.header(selected_fichier_nom)
         else:
             if emission_name[0] == None:
-                st.header('title')
+                st.header(selected_fichier_nom)
             else:
                 st.header(date_form + ', ' + emission_name[0])
         # Display the chart inside a container
         with st.container():
             st.pyplot(fig=fig_bubble)
+        if result and result != ('[]',):
+            topics = eval(result[0])  # Convert the string representation to a list of tuples
+            for topic_id, _ in topics:
+                if topic_id in themes:
+                    st.write(themes[topic_id])
+
     else:
         st.text("No transcription found for the selected Fichier Nom.")
     if texte:
@@ -211,22 +236,27 @@ def handle_search():
 
 def sidebar_elements():
     """Function handling the display of sidebar elements"""
-    st.checkbox('Trier les mots par fréquence', value=False, key='check')
+    st.selectbox('Choisir une émission',
+                 emission_noms,
+                 on_change=handle_select,
+                 key='select_emission'
+                 )
+    st.write('---')
     st.selectbox('Rechercher un mot fréquent',
                  form_results,
                  on_change=handle_search,
                  key='select_word',
                  index=0
                  )
-    st.selectbox('Choisir une émission',
-                 emission_noms,
-                 on_change=handle_select,
-                 key='select_emission'
-                 )
+    st.checkbox('Trier les mots par fréquence', value=False, key='check')
 
 def main():
     with st.sidebar.container():
         st.title("AciduleApp")
+        text = "Pour accéder à la transcription d'une émission de Radio Acidule, vous pouvez choisir une émission dans " \
+               "le menu déroulant ci-dessous, ou sélectionner un mot pour accéder aux émissions" \
+               " dans lesquelles le mot sélectionné est souvent présent."
+        st.markdown(f"<p style='text-align: justify;'>{text}</p>", unsafe_allow_html=True)
         sidebar_elements()
 
 
