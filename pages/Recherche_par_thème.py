@@ -20,6 +20,8 @@ cursor.execute("SELECT html_content FROM lda_model_info")
 model_html = cursor.fetchone()
 model_html = model_html[0] if model_html else None
 
+st.set_page_config(page_title='Radio Acidule', page_icon="📻", layout="centered",
+                   initial_sidebar_state="auto", menu_items=None)
 
 with st.sidebar.container():
     st.title("AciduleApp")
