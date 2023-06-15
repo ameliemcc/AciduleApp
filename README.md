@@ -2,7 +2,7 @@
 ## Projet de développement logiciel
 En collaboration avec les Archives de la Ville de Lausanne \
 Professeur : Davide Picca \
-Etudiante : Amélie McCormick \
+Etudiante : Amélie McCormick 
 
 ### Introduction
 La station lausannoise Radio Acidule a diffusé des émissions touchant des thèmes variés entre 1984 et 1999. Des 
