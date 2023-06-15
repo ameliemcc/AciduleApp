@@ -61,8 +61,9 @@ if 'show' not in st.session_state:
 
 
 def handle_go_to(titre):
-    if 'select_emission' not in st.session_state:
-        st.session_state['select_emission'] = titre
+    #if 'select_emission' not in st.session_state:
+       # st.session_state['select_emission'] = titre
+    st.session_state['select_emission'] = titre
     handle_select()
 
 
@@ -118,7 +119,9 @@ def handle_select():
     cursor.execute("SELECT date_diffusion FROM emission WHERE titre = ?",
                    (selected_fichier_nom,))
     date = cursor.fetchone()
+
     date_form = str(date[0]).replace("_", " ")
+
     # Query the database to fetch the corresponding "texte" based on the selected "fichier_nom"
     cursor.execute(
         "SELECT t.texte FROM transcription t JOIN emission e ON "
@@ -144,7 +147,10 @@ def handle_select():
         if date_form == 'None':
             st.header(selected_fichier_nom)
         else:
-            st.header(date_form + ', ' + emission_name[0])
+            if emission_name[0] == None:
+                st.header('title')
+            else:
+                st.header(date_form + ', ' + emission_name[0])
         # Display the chart inside a container
         with st.container():
             st.pyplot(fig=fig_bubble)
@@ -217,7 +223,6 @@ def sidebar_elements():
                  on_change=handle_select,
                  key='select_emission'
                  )
-
 
 def main():
     with st.sidebar.container():

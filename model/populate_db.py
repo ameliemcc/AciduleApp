@@ -12,7 +12,7 @@ file_path = os.path.join("model", "AciduleDB.db")
 conn = sqlite3.connect(file_path)
 cursor = conn.cursor()
 
-FOLDER_PATH = "../transcriptions"
+FOLDER_PATH = "../docs/transcriptions"
 
 stopwords = ["beaucoup", "bien", "oui", "non", "bon", "être", "avoir", "pouvoir",
              "faire",  "envoyer", "aller", "prendre", "devoir", "chose" ]
