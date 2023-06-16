@@ -8,7 +8,7 @@ Etudiante : Amélie McCormick
 La station lausannoise Radio Acidule a diffusé des émissions touchant des thèmes variés entre 1984 et 1999. Des 
 reportages sur la gestion des eaux usées, aux retranscriptions en direct des séances du conseil communal, en passant par
 des émissions destinées spécifiquement au retraités, les ondes d'Acidule ont porté des voix très diverses. 
-Les enregistrements sont disponibles en ligne sur la Web TV des Archives de Lausanne: (Dartfish)[https://www.dartfish.tv/Videos?CR=p33203c501361#AQEBAAEEAXGmBwAAAQEHAAABAgEBBgdhY2lkdWxlAQAAAAAA]
+Les enregistrements sont disponibles en ligne sur la Web TV des Archives de Lausanne: [Dartfish](https://www.dartfish.tv/Videos?CR=p33203c501361#AQEBAAEEAXGmBwAAAQEHAAABAgEBBgdhY2lkdWxlAQAAAAAA)
 
 ### But du projet
 - Transcription des émissions du corpus Acidule
