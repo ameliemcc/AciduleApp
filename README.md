@@ -29,9 +29,9 @@ streamlit run Recherche_par_mot.py
 ```
 ### Fonctionnalités
 L'application présente deux pages principales.\
-*Recherche par mot* : Permet à l'utilisateur d'écrire un mot qu'il souhaite rechercher dans les transcriptions, ou de le sélectionner dans une liste déroulante.
-L'utilisateur peut également choisir le titre d'une émission pour afficher sa transcription.
-*Recherche par topic* : Cette page affiche la carte de distance intertopic LDA, qui offre une représentation visuelle des thèmes qui apparaissent dans le corpus.
+*Recherche par mot* : Permet à l'utilisateur d'écrire un mot qu'il souhaite rechercher dans les transcriptions, ou de le sélectionner dans une liste déroulante.\
+L'utilisateur peut également choisir le titre d'une émission pour afficher sa transcription.\
+*Recherche par topic* : Cette page affiche la carte de distance intertopic LDA, qui offre une représentation visuelle des thèmes qui apparaissent dans le corpus.\
 Sous le graphique, l'utilisateur peut voir quelles émissions sont le plus liées à quel sujet.
 
 
